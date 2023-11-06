@@ -1,0 +1,316 @@
+<div class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <h1 class="m-0">Donasi Transfer</h1>
+      </div>
+      <div class="alert alert-success" *ngIf="alertMessage">
+        {{ alertMessage }}
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header">
+        <div class="d-flex justify-content-between align-items-center">
+          <button *ngIf="userRole === 'FRONT_OFFICE' || userRole === 'MARKETING_KOMUNIKASI'" (click)="openAddModal(addContent)" class="btn btn-primary btn-sm m-1">
+            <i class="nav-solid fas fa-plus"></i>
+            Tambah Data
+          </button>
+          <form (ngSubmit)="onSearch(search.value)">
+            <div class="input-group">
+              <input #search type="text" class="form-control form-control-sm" placeholder="Search">
+              <div class="input-group-append">
+                <button type="submit" class="btn btn-primary btn-sm">
+                  <span class="fas fa-search"></span>
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div class="card-body table-responsive p-0">
+        <table class="table table-hover">
+          <thead>
+          <tr>
+            <th>No</th>
+            <th>Tanggal</th>
+            <th>Nama Donatur</th>
+            <th>Jumlah Donasi</th>
+            <th>Akad</th>
+            <th>Bank Transfer</th>
+            <th>Foto Slip Bank</th>
+            <th>Keterangan</th>
+            <th *ngIf="userRole === 'FRONT_OFFICE' || userRole === 'MARKETING_KOMUNIKASI' || userRole === 'ADMIN_PENERIMAAN'">
+              Aksi
+            </th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let d of transferDonations | slice: (currentPage - 1) * pageSize : currentPage * pageSize; let i = index">
+            <td>{{ (currentPage - 1) * pageSize + i + 1 }}</td>
+            <td>{{ d.date | date: 'dd/MM/yyyy' }}</td>
+            <td>{{ d.donor.name }}</td>
+            <td>Rp {{ d.amount | number: '1.0-0' }}</td>
+            <td>{{ d.contract.replaceAll('_', ' ') }}</td>
+            <td>{{ d.transfersAccount.replaceAll('_', ' ') }}</td>
+            <td>
+              <button (click)="openViewImage(openImage, d)" class="btn btn-success btn-sm">
+                <i class="nav-icon fas fa-copy"></i>
+                Lihat Foto
+              </button>
+            </td>
+            <td>{{ d.otherInfo }}</td>
+            <td *ngIf="userRole === 'FRONT_OFFICE' || userRole === 'MARKETING_KOMUNIKASI' || userRole === 'ADMIN_PENERIMAAN'">
+              <button (click)="openUpdateModal(updateContent, d)" class="btn btn-warning btn-sm" title="Ubah"
+                      *ngIf="userRole === 'FRONT_OFFICE' || userRole === 'MARKETING_KOMUNIKASI' || userRole === 'ADMIN_PENERIMAAN'">
+                <i class="nav-solid fas fa-pen"></i>
+              </button>
+              <button (click)="openDeleteModal(deleteContent, d)" class="btn btn-danger btn-sm ml-1" title="Hapus"
+                      *ngIf="userRole === 'FRONT_OFFICE' || userRole === 'MARKETING_KOMUNIKASI'">
+                <i class="nav-solid fas fa-trash"></i>
+              </button>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="mt-3 ms-3">
+        <ngb-pagination
+          [(page)]="currentPage"
+          [pageSize]="pageSize"
+          [collectionSize]="transferDonations.length">
+        </ngb-pagination>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #addContent let-modal>
+  <div class="modal-header">
+    <h1 class="modal-title fs-5">Tambah Data Donasi Transfer</h1>
+    <button type="button" (click)="modal.close()" class="btn-close" aria-label="Close"></button>
+  </div>
+  <form #addForm="ngForm" (ngSubmit)="onAddTransferDonation(addForm)">
+    <div class="modal-body">
+      <div class="form-group">
+        <label>Tanggal</label>
+        <input type="date" ngModel name="date" class="form-control" id="addDate" autocomplete="off" required>
+        <div *ngIf="errors?.date" class="is-invalid text-danger">{{ errors.date }}</div>
+      </div>
+      <div class="form-group">
+        <label>Nama Donatur</label>
+        <select ngModel name="donorId" class="custom-select" required>
+          <option value="">-- Pilih Donatur --</option>
+          <option *ngFor="let donor of donors" [value]="donor.id">{{ donor.name }}</option>
+        </select>
+        <div *ngIf="errors?.donorId" class="is-invalid text-danger">{{ errors.donorId }}</div>
+      </div>
+      <div class="form-group">
+        <label>Akad</label>
+        <select ngModel name="contract" class="custom-select" required>
+          <option value="">-- Pilih Akad --</option>
+          <option value="ZAKAT_INDIVIDU">ZAKAT INDIVIDU</option>
+          <option value="ZAKAT_ENTITAS">ZAKAT ENTITAS</option>
+          <option value="ZAKAT_FITRAH">ZAKAT FITRAH</option>
+          <option value="INSHO">INSHO</option>
+          <option value="BANTUAN_BENCANA">BANTUAN BENCANA</option>
+          <option value="NADZAR">NADZAR</option>
+          <option value="AMBULANCE">AMBULANCE</option>
+          <option value="FIDYAH">FIDYAH</option>
+          <option value="KIFARAT">KIFARAT</option>
+          <option value="AQIQAH">AQIQAH</option>
+          <option value="QURBAN">QURBAN</option>
+          <option value="HIBAH">HIBAH</option>
+          <option value="SANTUNAN_ACARA">SANTUNAN ACARA</option>
+          <option value="EVENT_ACARA">EVENT ACARA</option>
+          <option value="NON_HALAL">NON HALAL</option>
+          <option value="WAKAF_PEDULI">WAKAF PEDULI</option>
+          <option value="WAKAF_QURAN">WAKAF QURAN</option>
+          <option value="WAKAF_BANGUNAN">WAKAF BANGUNAN</option>
+          <option value="EVENT_RAMADHAN">EVENT RAMADHAN</option>
+          <option value="PENGADAAN_LAHAN">PENGADAAN LAHAN</option>
+          <option value="LAIN_LAIN">LAIN LAIN</option>
+        </select>
+        <div *ngIf="errors?.contract" class="is-invalid text-danger">{{ errors.contract }}</div>
+      </div>
+      <div class="form-group">
+        <label>Bank Transfer</label>
+        <select ngModel name="transfersAccount" class="custom-select" required>
+          <option value="">-- Pilih Bank Transfer --</option>
+          <option value="BSI_7745678925_ISHO">BSI 7745678925 ISHO</option>
+          <option value="BSI_7444401235_ZAKAT">BSI 7444401235 ZAKAT</option>
+          <option value="BSI_7440011238_WAKAF">BSI 7440011238 WAKAF</option>
+          <option value="BSI_7444401235_QURBAN_dan_AQIQAH">BSI 7444401235 QURBAN dan AQIQAH</option>
+          <option value="BCA_1340977722_INSHO">BCA 1340977722 INSHO</option>
+          <option value="BCA_1341277600_WAKAF">BCA 1341277600 WAKAF</option>
+          <option value="BCA_1342599111_QURBAN_dan_AQIQAH">BCA 1342599111 QURBAN dan AQIQAH</option>
+          <option value="BCA_1341624849_ZAKAT">BCA 1341624849 ZAKAT</option>
+          <option value="MANDIRI_1340005660922_INSHO">MANDIRI 1340005660922 INSHO</option>
+          <option value="MANDIRI_SYARIAH_0230117111_INSHO">MANDIRI SYARIAH 0230117111 INSHO</option>
+          <option value="MANDIRI_1340097778889_ZAKAT">MANDIRI 1340097778889 ZAKAT</option>
+          <option value="MANDIRI_1340009777888_WAKAF">MANDIRI 1340009777888 WAKAF</option>
+          <option value="MANDIRI_1340011280194_EVENT">MANDIRI 1340011280194 EVENT</option>
+          <option value="BNI_0208443006_INSHO">BNI 0208443006 INSHO</option>
+          <option value="BNI_0378660864_ZAKAT">BNI 0378660864 ZAKAT</option>
+          <option value="BRI_0107001008139538_INSHO">BRI 0107001008139538 INSHO</option>
+          <option value="REKENING_CSO">REKENING CSO</option>
+          <option value="LINK_AJA">LINK AJA</option>
+          <option value="DANA">DANA</option>
+          <option value="QRIS">QRIS</option>
+          <option value="GOPAY">GOPAY</option>
+          <option value="YOUTAP">YOUTAP</option>
+          <option value="LAINNYA">LAINNYA</option>
+        </select>
+        <div *ngIf="errors?.transfersAccount" class="is-invalid text-danger">{{ errors.transfersAccount }}</div>
+      </div>
+      <div class="form-group">
+        <label>Jumlah Donasi</label>
+        <input type="text" appDotNumber ngModel name="amount" class="form-control" autocomplete="off" required>
+        <div *ngIf="errors?.amount" class="is-invalid text-danger">{{ errors.amount}}</div>
+      </div>
+      <div class="form-group">
+        <label>Foto Slip Bank</label>
+        <input type="file" ngModel name="receiptPhoto" (change)="onFileSelected($event)" class="form-control" autocomplete="off" required>
+      </div>
+      <div class="form-group">
+        <label>Keterangan</label>
+        <textarea ngModel name="otherInfo" class="form-control" rows="3" placeholder="Masukkan keterangan..."></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button (click)="modal.close()" type="button" class="btn btn-secondary">Batal</button>
+      <button [disabled]="addForm.invalid" type="submit" class="btn btn-primary">Simpan</button>
+    </div>
+  </form>
+</ng-template>
+
+<ng-template #updateContent let-modal>
+  <div class="modal-header">
+    <h1 class="modal-title fs-5">Ubah Data Donasi Transfer</h1>
+    <button type="button" (click)="modal.close()" class="btn-close" aria-label="Close"></button>
+  </div>
+  <form #updateForm="ngForm" (ngSubmit)="onUpdateTransferDonation(updateForm)">
+    <div class="modal-body">
+      <input type="hidden" name="id" ngModel="{{ transferDonation?.id }}">
+      <div class="form-group">
+        <label>Tanggal</label>
+        <input type="date" ngModel="{{ transferDonation?.date }}" name="date" class="form-control" id="updateDate" autocomplete="off" required>
+        <div *ngIf="errors?.date" class="is-invalid text-danger">{{ errors.date }}</div>
+      </div>
+      <div class="form-group">
+        <label>Nama Donatur</label>
+        <select [ngModel]="transferDonation!.donor!.id" name="donorId" class="custom-select" required>
+          <option *ngFor="let donor of donors" [value]="donor.id">{{ donor.name }}</option>
+        </select>
+        <div *ngIf="errors?.donorId" class="is-invalid text-danger">{{ errors.donorId }}</div>
+      </div>
+      <div class="form-group">
+        <label>Akad</label>
+        <select ngModel="{{ transferDonation?.contract }}" name="contract" class="custom-select" required>
+          <option value="ZAKAT_INDIVIDU">ZAKAT INDIVIDU</option>
+          <option value="ZAKAT_ENTITAS">ZAKAT ENTITAS</option>
+          <option value="ZAKAT_FITRAH">ZAKAT FITRAH</option>
+          <option value="INSHO">INSHO</option>
+          <option value="BANTUAN_BENCANA">BANTUAN BENCANA</option>
+          <option value="NADZAR">NADZAR</option>
+          <option value="AMBULANCE">AMBULANCE</option>
+          <option value="FIDYAH">FIDYAH</option>
+          <option value="KIFARAT">KIFARAT</option>
+          <option value="AQIQAH">AQIQAH</option>
+          <option value="QURBAN">QURBAN</option>
+          <option value="HIBAH">HIBAH</option>
+          <option value="SANTUNAN_ACARA">SANTUNAN ACARA</option>
+          <option value="EVENT_ACARA">EVENT ACARA</option>
+          <option value="NON_HALAL">NON HALAL</option>
+          <option value="WAKAF_PEDULI">WAKAF PEDULI</option>
+          <option value="WAKAF_QURAN">WAKAF QURAN</option>
+          <option value="WAKAF_BANGUNAN">WAKAF BANGUNAN</option>
+          <option value="EVENT_RAMADHAN">EVENT RAMADHAN</option>
+          <option value="PENGADAAN_LAHAN">PENGADAAN LAHAN</option>
+          <option value="LAIN_LAIN">LAIN LAIN</option>
+        </select>
+        <div *ngIf="errors?.contract" class="is-invalid text-danger">{{ errors.contract }}</div>
+      </div>
+      <div class="form-group">
+        <label>Bank Transfer</label>
+        <select ngModel="{{ transferDonation?.transfersAccount }}" name="transfersAccount" class="custom-select" required>
+          <option value="BSI_7745678925_ISHO">BSI 7745678925 ISHO</option>
+          <option value="BSI_7444401235_ZAKAT">BSI 7444401235 ZAKAT</option>
+          <option value="BSI_7440011238_WAKAF">BSI 7440011238 WAKAF</option>
+          <option value="BSI_7444401235_QURBAN_dan_AQIQAH">BSI 7444401235 QURBAN dan AQIQAH</option>
+          <option value="BCA_1340977722_INSHO">BCA 1340977722 INSHO</option>
+          <option value="BCA_1341277600_WAKAF">BCA 1341277600 WAKAF</option>
+          <option value="BCA_1342599111_QURBAN_dan_AQIQAH">BCA 1342599111 QURBAN dan AQIQAH</option>
+          <option value="BCA_1341624849_ZAKAT">BCA 1341624849 ZAKAT</option>
+          <option value="MANDIRI_1340005660922_INSHO">MANDIRI 1340005660922 INSHO</option>
+          <option value="MANDIRI_SYARIAH_0230117111_INSHO">MANDIRI SYARIAH 0230117111 INSHO</option>
+          <option value="MANDIRI_1340097778889_ZAKAT">MANDIRI 1340097778889 ZAKAT</option>
+          <option value="MANDIRI_1340009777888_WAKAF">MANDIRI 1340009777888 WAKAF</option>
+          <option value="MANDIRI_1340011280194_EVENT">MANDIRI 1340011280194 EVENT</option>
+          <option value="BNI_0208443006_INSHO">BNI 0208443006 INSHO</option>
+          <option value="BNI_0378660864_ZAKAT">BNI 0378660864 ZAKAT</option>
+          <option value="BRI_0107001008139538_INSHO">BRI 0107001008139538 INSHO</option>
+          <option value="REKENING_CSO">REKENING CSO</option>
+          <option value="LINK_AJA">LINK AJA</option>
+          <option value="DANA">DANA</option>
+          <option value="QRIS">QRIS</option>
+          <option value="GOPAY">GOPAY</option>
+          <option value="YOUTAP">YOUTAP</option>
+          <option value="LAINNYA">LAINNYA</option>
+        </select>
+        <div *ngIf="errors?.transfersAccount" class="is-invalid text-danger">{{ errors.transfersAccount }}</div>
+      </div>
+      <div class="form-group">
+        <label>Jumlah Donasi</label>
+        <input type="text" appDotNumber ngModel="{{ addDotNumber(transferDonation!.amount) }}" name="amount" class="form-control" autocomplete="off" required>
+        <div *ngIf="errors?.amount" class="is-invalid text-danger">{{ errors.amount }}</div>
+      </div>
+      <div class="form-group">
+        <label>Foto Slip Bank</label>
+        <input type="file" ngModel (change)="onFileSelected($event)" name="receiptPhoto" class="form-control" autocomplete="off" required>
+        <img class="mt-1" [src]="transferDonation?.receiptPhoto" width="100" alt="Foto Slip Bank">
+      </div>
+      <div class="form-group">
+        <label>Keterangan</label>
+        <textarea ngModel="{{ transferDonation?.otherInfo }}" name="otherInfo" class="form-control" rows="3" placeholder="Masukkan keterangan..."></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button (click)="modal.close()" type="button" class="btn btn-secondary">Batal</button>
+      <button [disabled]="updateForm.invalid" type="submit" class="btn btn-primary">Simpan</button>
+    </div>
+  </form>
+</ng-template>
+
+<ng-template #deleteContent let-modal>
+  <div class="modal-header">
+    <h1 class="modal-title fs-5">Konfirmasi Hapus</h1>
+    <button type="button" (click)="modal.close()" class="btn-close" aria-label="Close"></button>
+  </div>
+  <div class="modal-body">
+    Anda yakin ingin menghapus data?
+    <!--    <span class="badge rounded-pill text-bg-success">-->
+    <!--      {{ transferDonation?.contract }}-->
+    <!--    </span><br><br>-->
+  </div>
+  <div class="modal-footer">
+    <button (click)="modal.close()" type="button" class="btn btn-secondary">Batal</button>
+    <button (click)="onDeleteTransferDonation(transferDonation!.id)" type="button" class="btn btn-danger" id="delete">
+      Hapus
+    </button>
+  </div>
+</ng-template>
+
+<ng-template #openImage let-modal>
+  <div class="modal-header">
+    <h1 class="modal-title fs-5">Foto Slip Bank</h1>
+    <button type="button" (click)="modal.close()" class="btn-close" aria-label="Close"></button>
+  </div>
+  <div class="modal-body text-center">
+    <img [src]="url" width="100%" alt="Foto Slip Bank">
+  </div>
+</ng-template>

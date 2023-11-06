@@ -1,0 +1,321 @@
+<div class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <h1 class="m-0">Donasi Pundi</h1>
+      </div>
+      <div class="alert alert-success" *ngIf="alertMessage">
+        {{ alertMessage }}
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header">
+        <div class="d-flex justify-content-between align-items-center">
+          <button *ngIf="userRole === 'PETUGAS_PUNDI'" (click)="openAddModal(addContent)" class="btn btn-primary btn-sm m-1">
+            <i class="nav-solid fas fa-plus"></i>
+            Tambah Data
+          </button>
+          <form (ngSubmit)="onSearch(search.value)">
+            <div class="input-group">
+              <input #search type="text" class="form-control form-control-sm" placeholder="Search">
+              <div class="input-group-append">
+                <button type="submit" class="btn btn-primary btn-sm">
+                  <span class="fas fa-search"></span>
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div class="card-body table-responsive p-0">
+        <table class="table table-hover">
+          <thead>
+          <tr>
+            <th>No</th>
+            <th>Tanggal</th>
+            <th>Ket. Pundi</th>
+            <th>Pundi/Outlet</th>
+            <th>Nominal</th>
+            <th>Akad</th>
+            <th>No Kuitansi</th>
+            <th>Sudah Diganti?</th>
+            <th>Foto</th>
+            <th>Keterangan</th>
+            <th *ngIf="userRole === 'PETUGAS_PUNDI' || userRole === 'ADMIN_PENERIMAAN'">
+              Aksi
+            </th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let d of pickupDonations | slice: (currentPage - 1) * pageSize : currentPage * pageSize; let i = index">
+            <td>{{ (currentPage - 1) * pageSize + i + 1 }}</td>
+            <td>{{ d.date | date: 'dd/MM/yyyy' }}</td>
+            <td>{{ d.pickUpInfo }}</td>
+            <td>{{ d.charityBox.code }} ({{ d.charityBox.outletName }}-{{ d.charityBox.ownerName }})</td>
+            <td>
+              <span *ngIf="d.amount">Rp </span>{{ d.amount | number: '1.0-0' }}
+            </td>
+            <td>{{ d.contract }}</td>
+            <td>{{ d.receiptNumber }}</td>
+            <td>{{ d.replaced }}</td>
+            <td>
+              <button (click)="openViewImage(openImage, d)" class="btn btn-success btn-sm">
+                <i class="nav-icon fas fa-copy"></i>
+                Lihat Foto
+              </button>
+            </td>
+            <td>{{ d.otherInfo }}</td>
+            <td>
+              <button (click)="openUpdateModal(updateContent, d)" class="btn btn-warning btn-sm" title="Ubah"
+                      *ngIf="userRole === 'PETUGAS_PUNDI' || userRole === 'ADMIN_PENERIMAAN'">
+                <i class="nav-solid fas fa-pen"></i>
+              </button>
+              <button (click)="openDeleteModal(deleteContent, d)" class="btn btn-danger btn-sm ml-1" title="Hapus"
+                      *ngIf="userRole === 'PETUGAS_PUNDI'">
+                <i class="nav-solid fas fa-trash"></i>
+              </button>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="mt-3 ms-3">
+        <ngb-pagination
+          [(page)]="currentPage"
+          [pageSize]="pageSize"
+          [collectionSize]="pickupDonations.length">
+        </ngb-pagination>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #addContent let-modal>
+  <div class="modal-header">
+    <h1 class="modal-title fs-5">Tambah Data Donasi Pundi</h1>
+    <button type="button" (click)="modal.close()" class="btn-close" aria-label="Close"></button>
+  </div>
+  <form #addForm="ngForm" (ngSubmit)="onAddPickupDonation(addForm)">
+    <div class="modal-body">
+      <div class="form-group">
+        <label>Tanggal</label>
+        <input type="date" ngModel name="date" class="form-control" id="addDate" autocomplete="off" required>
+        <div *ngIf="errors?.date" class="is-invalid text-danger">{{ errors.date }}</div>
+      </div>
+      <div class="form-group">
+        <label>Ket. Pundi</label>
+        <select #pickupInfo ngModel name="pickUpInfo" class="custom-select" required>
+          <option value="">-- Pilih Ket. Pundi --</option>
+          <option value="ISI">ISI</option>
+          <option value="KOSONG">KOSONG</option>
+          <option value="TUTUP">TUTUP</option>
+          <option value="RUSAK">RUSAK</option>
+          <option value="DELETE">DELETE</option>
+          <option value="HILANG">HILANG</option>
+          <option value="TARIK">TARIK</option>
+        </select>
+        <div *ngIf="errors?.pickUpInfo" class="is-invalid text-danger">{{ errors.pickUpInfo }}</div>
+      </div>
+      <div class="form-group">
+        <label>Pundi/Outlet</label>
+        <select ngModel name="charityBoxId" required class="custom-select">
+          <option value="">-- Pilih Pundi/Outlet --</option>
+          <option *ngFor="let c of charityBoxes" [value]="c.id">
+            {{ c.code }} ({{ c.outletName }}-{{ c.ownerName }})
+          </option>
+        </select>
+        <div *ngIf="errors?.charityBoxId" class="is-invalid text-danger">{{ errors.charityBoxId }}</div>
+      </div>
+      <ng-container *ngIf="pickupInfo.value === 'ISI' || pickupInfo.value === ''">
+        <div class="form-group">
+          <label>Nominal</label>
+          <input type="text" appDotNumber ngModel name="amount" class="form-control" autocomplete="off" required>
+          <div *ngIf="errors?.amount" class="is-invalid text-danger">{{ errors.amount }}</div>
+        </div>
+        <div class="form-group">
+          <label>Akad</label>
+          <select #contract ngModel name="contract" class="custom-select" required>
+            <option value="">-- Pilih Akad --</option>
+            <option value="ZAKAT">ZAKAT</option>
+            <option value="INSHO">INSHO</option>
+            <option value="LAINNYA">LAINNYA</option>
+          </select>
+          <div *ngIf="errors?.contract && contract.value === ''" class="is-invalid text-danger">{{ errors.contract }}</div>
+        </div>
+        <div class="form-group" *ngIf="contract.value === 'LAINNYA'">
+          <label>Akad Lainnya</label>
+          <input type="text" ngModel name="otherContract" class="form-control" autocomplete="off" required>
+          <div *ngIf="errors?.contract" class="is-invalid text-danger">{{ errors.contract }}</div>
+        </div>
+        <div class="form-group">
+          <label>No Kuitansi</label>
+          <input type="text" ngModel name="receiptNumber" class="form-control" autocomplete="off" required>
+        </div>
+      </ng-container>
+      <div class="form-group">
+        <label>Foto
+          <ng-container *ngIf="pickupInfo.value === 'ISI' || pickupInfo.value === ''">
+            Kuitansi
+          </ng-container>
+          <ng-container *ngIf="pickupInfo.value === 'KOSONG' || pickupInfo.value === 'RUSAK'">
+            Pundi
+          </ng-container>
+          <ng-container *ngIf="pickupInfo.value === 'TUTUP' || pickupInfo.value === 'DELETE' || pickupInfo.value === 'HILANG' || pickupInfo.value === 'TARIK'">
+            Outlet
+          </ng-container>
+        </label>
+        <input type="file" (change)="onFileSelected($event)" ngModel name="photo" class="form-control" autocomplete="off" required>
+      </div>
+      <div class="form-group" *ngIf="pickupInfo.value === 'RUSAK' || pickupInfo.value === 'HILANG'">
+        <label>Sudah Diganti?</label>
+        <label class="d-block font-weight-normal">
+          <input type="radio" ngModel name="replaced" value="Sudah" required>
+          Sudah
+        </label>
+        <label class="d-block font-weight-normal">
+          <input type="radio" ngModel name="replaced" value="Belum" required>
+          Belum
+        </label>
+      </div>
+      <div class="form-group">
+        <label>Keterangan</label>
+        <textarea ngModel name="otherInfo" class="form-control" rows="3" placeholder="Masukkan keterangan..."></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button (click)="modal.close()" type="button" class="btn btn-secondary">Batal</button>
+      <button [disabled]="addForm.invalid" type="submit" class="btn btn-primary">Simpan</button>
+    </div>
+  </form>
+</ng-template>
+
+<ng-template #updateContent let-modal>
+  <div class="modal-header">
+    <h1 class="modal-title fs-5">Ubah Data Donasi Pundi</h1>
+    <button type="button" (click)="modal.dismiss()" class="btn-close" aria-label="Close"></button>
+  </div>
+  <form #updateForm="ngForm" (ngSubmit)="onUpdatePickupDonation(updateForm)">
+    <div class="modal-body">
+      <input type="hidden" name="id" ngModel="{{ pickupDonation?.id }}">
+      <div class="form-group">
+        <label>Tanggal</label>
+        <input type="date" ngModel="{{ pickupDonation?.date }}" name="date" class="form-control" id="updateDate" autocomplete="off" required>
+        <div *ngIf="errors?.date" class="is-invalid text-danger">{{ errors.date }}</div>
+      </div>
+      <div class="form-group">
+        <label>Ket. Pundi</label>
+        <select #pickupInfo ngModel="{{ pickupDonation?.pickUpInfo }}" name="pickUpInfo" class="custom-select" required>
+          <option value="ISI">ISI</option>
+          <option value="KOSONG">KOSONG</option>
+          <option value="TUTUP">TUTUP</option>
+          <option value="RUSAK">RUSAK</option>
+          <option value="DELETE">DELETE</option>
+          <option value="HILANG">HILANG</option>
+          <option value="TARIK">TARIK</option>
+        </select>
+        <div *ngIf="errors?.pickUpInfo" class="is-invalid text-danger">{{ errors.pickUpInfo }}</div>
+      </div>
+      <div class="form-group">
+        <label>Pundi/Outlet</label>
+        <select [ngModel]="pickupDonation!.charityBox!.id" name="charityBoxId" class="custom-select" required>
+          <option *ngFor="let c of charityBoxes" [value]="c.id">{{ c.code }} ({{ c.outletName }}-{{ c.ownerName }})
+          </option>
+        </select>
+        <div *ngIf="errors?.charityBoxId" class="is-invalid text-danger">{{ errors.charityBoxId }}</div>
+      </div>
+      <ng-container *ngIf="pickupInfo.value === 'ISI' || pickupInfo.value === ''">
+        <div class="form-group">
+          <label>Nominal</label>
+          <input type="text" appDotNumber ngModel="{{ addDotNumber(pickupDonation!.amount) }}" name="amount" class="form-control" autocomplete="off" required>
+          <div *ngIf="errors?.amount" class="is-invalid text-danger">{{ errors.amount}}</div>
+        </div>
+        <div class="form-group">
+          <label>Akad</label>
+          <select #contract ngModel="{{ pickupDonation?.contract }}" name="contract" class="custom-select" required>
+            <option value="ZAKAT">ZAKAT</option>
+            <option value="INSHO">INSHO</option>
+            <option value="LAINNYA">LAINNYA</option>
+          </select>
+          <div *ngIf="errors?.contract && contract.value === ''" class="is-invalid text-danger">{{ errors.contract }}</div>
+        </div>
+        <div class="form-group" *ngIf="contract.value === 'LAINNYA'">
+          <label>Akad Lainnya</label>
+          <input type="text" ngModel="{{ pickupDonation?.otherContract }}" name="otherContract" class="form-control" autocomplete="off" required>
+          <div *ngIf="errors?.contract" class="is-invalid text-danger">{{ errors.contract }}</div>
+        </div>
+        <div class="form-group">
+          <label>No Kuitansi</label>
+          <input type="text" ngModel="{{ pickupDonation?.receiptNumber }}" name="receiptNumber" class="form-control" autocomplete="off" required>
+        </div>
+      </ng-container>
+      <div class="form-group">
+        <label>Foto
+          <ng-container *ngIf="pickupInfo.value === 'ISI' || pickupInfo.value === ''">
+            Kuitansi
+          </ng-container>
+          <ng-container *ngIf="pickupInfo.value === 'KOSONG' || pickupInfo.value === 'RUSAK'">
+            Pundi
+          </ng-container>
+          <ng-container *ngIf="pickupInfo.value === 'TUTUP' || pickupInfo.value === 'DELETE' || pickupInfo.value === 'HILANG' || pickupInfo.value === 'TARIK'">
+            Outlet
+          </ng-container>
+        </label>
+        <input type="file" ngModel (change)="onFileSelected($event)" name="photo" class="form-control" autocomplete="off" required>
+        <img class="mt-1" [src]="pickupDonation?.photo" width="100" alt="Foto Kuitansi">
+      </div>
+      <div class="form-group" *ngIf="pickupInfo.value === 'RUSAK' || pickupInfo.value === 'HILANG'">
+        <label>Sudah Diganti?</label>
+        <label class="d-block font-weight-normal">
+          <input type="radio" ngModel="{{ pickupDonation?.replaced }}" name="replaced" value="Sudah" required>
+          Sudah
+        </label>
+        <label class="d-block font-weight-normal">
+          <input type="radio" ngModel="{{ pickupDonation?.replaced }}" name="replaced" value="Belum" required>
+          Belum
+        </label>
+      </div>
+      <div class="form-group">
+        <label>Keterangan</label>
+        <textarea ngModel="{{ pickupDonation?.otherInfo }}" name="otherInfo" class="form-control" rows="3" placeholder="Masukkan keterangan..."></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button (click)="modal.dismiss()" type="button" class="btn btn-secondary">Batal</button>
+      <button [disabled]="updateForm.invalid" type="submit" class="btn btn-primary">Simpan</button>
+    </div>
+  </form>
+</ng-template>
+
+<ng-template #deleteContent let-modal>
+  <div class="modal-header">
+    <h1 class="modal-title fs-5">Konfirmasi Hapus</h1>
+    <button type="button" (click)="modal.close()" class="btn-close" aria-label="Close"></button>
+  </div>
+  <div class="modal-body">
+    Anda yakin ingin menghapus data?
+    <!--    <span class="badge rounded-pill text-bg-success">-->
+    <!--         Rp {{ pickupDonation?.charityBoxId | number: '1.0-0' }}-->
+    <!--    </span><br><br>-->
+  </div>
+  <div class="modal-footer">
+    <button (click)="modal.close()" type="button" class="btn btn-secondary">Batal</button>
+    <button (click)="onDeletePickupDonation(pickupDonation!.id)" type="button" class="btn btn-danger" id="delete">
+      Hapus
+    </button>
+  </div>
+</ng-template>
+
+<ng-template #openImage let-modal>
+  <div class="modal-header">
+    <h1 class="modal-title fs-5">Bukti Transaksi</h1>
+    <button type="button" (click)="modal.close()" class="btn-close" aria-label="Close"></button>
+  </div>
+  <div class="modal-body text-center">
+    <img [src]="url" width="100%" alt="Foto Bukti">
+  </div>
+</ng-template>

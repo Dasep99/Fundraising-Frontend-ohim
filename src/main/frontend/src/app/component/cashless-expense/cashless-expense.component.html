@@ -1,0 +1,309 @@
+<div class="content-header" xmlns="http://www.w3.org/1999/html">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <h1 class="m-0">Pengeluaran Non Tunai</h1>
+      </div>
+      <div class="alert alert-success" *ngIf="alertMessage">
+        {{ alertMessage }}
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header">
+        <div class="d-flex justify-content-between align-items-center">
+          <button *ngIf="userRole === 'FRONT_OFFICE'" (click)="openAddModal(addContent)" class="btn btn-primary btn-sm m-1">
+            <i class="nav-solid fas fa-plus"></i>
+            Tambah Data
+          </button>
+          <form (ngSubmit)="onSearch(search.value)">
+            <div class="input-group">
+              <input #search type="text" class="form-control form-control-sm" placeholder="Search">
+              <div class="input-group-append">
+                <button type="submit" class="btn btn-primary btn-sm">
+                  <span class="fas fa-search"></span>
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div class="card-body table-responsive p-0">
+        <table class="table table-hover">
+          <thead>
+          <tr>
+            <th>No</th>
+            <th>Tanggal</th>
+            <th>No BBK</th>
+            <th>Akun</th>
+            <th>Penyaluran</th>
+            <th>Barang Keluar</th>
+            <th>Foto BBK</th>
+            <th>Keterangan</th>
+            <th *ngIf="userRole === 'FRONT_OFFICE' || userRole === 'ADMIN_PENERIMAAN'">
+              Aksi
+            </th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let d of cashlessExpenses | slice: (currentPage - 1) * pageSize : currentPage * pageSize; let i = index">
+            <td>{{ (currentPage - 1) * pageSize + i + 1 }}</td>
+            <td>{{ d.date | date: 'dd/MM/yyyy' }}</td>
+            <td>{{ d.bbkNumber }}</td>
+            <td>{{ d.contract.replaceAll('_', ' ') }}</td>
+            <td>{{ d.distribution.replaceAll('_', ' ') }}</td>
+            <td>
+              <div *ngFor="let i of d.items">
+                - {{ i.replaceAll('_', ' ') }}
+              </div>
+            </td>
+            <td>
+              <button (click)="openViewImage(openImage, d)" class="btn btn-success btn-sm">
+                <i class="nav-icon fas fa-copy"></i>
+                Lihat Foto
+              </button>
+            </td>
+            <td>{{ d.otherInfo }}</td>
+            <td>
+              <button (click)="openUpdateModal(updateContent, d)" class="btn btn-warning btn-sm" title="Ubah"
+                      *ngIf="userRole === 'FRONT_OFFICE' || userRole === 'ADMIN_PENERIMAAN'">
+                <i class="nav-solid fas fa-pen"></i>
+              </button>
+              <button (click)="openDeleteModal(deleteContent, d)" class="btn btn-danger btn-sm ml-1" title="Hapus"
+                      *ngIf="userRole === 'FRONT_OFFICE'">
+                <i class="nav-solid fas fa-trash"></i>
+              </button>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="mt-3 ms-3">
+        <ngb-pagination
+          [(page)]="currentPage"
+          [pageSize]="pageSize"
+          [collectionSize]="cashlessExpenses.length">
+        </ngb-pagination>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #addContent let-modal>
+  <div class="modal-header">
+    <h1 class="modal-title fs-5">Tambah Data Pengeluaran Non Tunai</h1>
+    <button type="button" (click)="modal.close()" class="btn-close" aria-label="Close"></button>
+  </div>
+  <form #addForm="ngForm" (ngSubmit)="onAddCashlessExpense(addForm)">
+    <div class="modal-body">
+      <div class="form-group">
+        <label>Tanggal</label>
+        <input type="date" ngModel name="date" class="form-control" id="addDate" autocomplete="off">
+        <div *ngIf="errors?.date" class="is-invalid text-danger">{{ errors.date }}</div>
+      </div>
+<!--      <div class="form-group">-->
+<!--        <label>No BBK</label>-->
+<!--        <input type="text" ngModel name="bbkNumber" class="form-control" autocomplete="off">-->
+<!--      </div>-->
+      <div class="form-group">
+        <label>Akun</label>
+        <select ngModel name="contract" class="custom-select">
+          <option value="">-- Pilih Akun --</option>
+          <option value="PENYALURAN_DANA_ZAKAT">PENYALURAN DANA ZAKAT</option>
+          <option value="PENYALURAN_DANA_INFAK_SEDEKAH">PENYALURAN DANA INFAK SEDEKAH</option>
+          <option value="PENYALURAN_DANA_SOSIAL_KEAGAMAAN_LAINNYA">PENYALURAN DANA SOSIAL KEAGAMAAN LAINNYA</option>
+          <option value="BEBAN_TUNJANGAN_NON_TUNAI">BEBAN TUNJANGAN NON TUNAI</option>
+        </select>
+        <div *ngIf="errors?.contract" class="is-invalid text-danger">{{ errors.contract }}</div>
+      </div>
+      <div class="form-group">
+        <label>Penyaluran</label>
+        <select ngModel name="distribution" class="custom-select">
+          <option value="">-- Pilih Penyaluran --</option>
+          <option value="FAKIR">FAKIR</option>
+          <option value="MISKIN">MISKIN</option>
+          <option value="AMIL">AMIL</option>
+          <option value="MUALAF">MUALAF</option>
+          <option value="RIQOB">RIQOB</option>
+          <option value="GHARIMIN">GHARIMIN</option>
+          <option value="SABILILLAH">SABILILLAH</option>
+          <option value="IBNU_SABIL">IBNU SABIL</option>
+          <option value="ASRAMA_GRAY">ASRAMA GRAY</option>
+          <option value="GRAY_PEDULI_SESAMA">GRAY PEDULI SESAMA</option>
+          <option value="TANGGAP_BENCANA">TANGGAP BENCANA</option>
+          <option value="BAGIAN_AMIL_DARI_ZAKAT_NON_TUNAI">BAGIAN AMIL DARI ZAKAT NON TUNAI</option>
+          <option value="BAGIAN_AMIL_DARI_INFAK_DAN_SEDEKAH_NON_TUNAI">BAGIAN AMIL DARI INFAK DAN SEDEKAH NON TUNAI
+          </option>
+          <option value="BAGIAN_AMIL_DARI_DSKL_NON_TUNAI">BAGIAN AMIL DARI DSKL NON TUNAI</option>
+        </select>
+        <div *ngIf="errors?.distribution" class="is-invalid text-danger">{{ errors.distribution }}</div>
+      </div>
+      <div class="form-group">
+        <label>Barang Keluar</label>
+        <select multiple ngModel name="items" class="custom-select">
+          <option value="">-- Pilih Barang Keluar --</option>
+          <option value="BERAS_KG">BERAS KG</option>
+          <option value="MIE_PCS">MIE PCS</option>
+          <option value="TERIGU_KG">TERIGU KG</option>
+          <option value="MINYAK_GORENG_LITER">MINYAK GORENG LITER</option>
+          <option value="GULA_KG">GULA KG</option>
+          <option value="TEH_ISI_25_ATAU_30">TEH ISI 25 ATAU 30</option>
+          <option value="TEH_ISI_50">TEH ISI 50</option>
+          <option value="TEH_ISI_100">TEH ISI 100</option>
+          <option value="SUSU_KECIL">SUSU KECIL</option>
+          <option value="SUSU_BESAR">SUSU BESAR</option>
+          <option value="SARDEN_KECIL">SARDEN KECIL</option>
+          <option value="SARDEN_BEASAR">SARDEN BEASAR</option>
+          <option value="DONASI_SELAIN_13">DONASI SELAIN 13</option>
+          <option value="PERALATAN">PERALATAN</option>
+          <option value="BARANG_BERHARGA">BARANG BERHARGA</option>
+          <option value="KAMBING_QURBAN">KAMBING QURBAN</option>
+          <option value="SAPI_QURBAN">SAPI QURBAN</option>
+          <option value="KENDARAAN_RODA_2">KENDARAAN RODA 2</option>
+          <option value="KENDARAAN_RODA_4">KENDARAAN RODA 4</option>
+          <option value="TANAH">TANAH</option>
+          <option value="BANGUNAN">BANGUNAN</option>
+        </select>
+        <div *ngIf="errors?.items" class="is-invalid text-danger">{{ errors.items }}</div>
+      </div>
+      <div class="form-group">
+        <label>Foto BBK</label>
+        <input type="file" (change)="onFileSelected($event)" ngModel name="bbkPhoto" class="form-control" autocomplete="off">
+      </div>
+      <div class="form-group">
+        <label>Keterangan</label>
+        <textarea ngModel name="otherInfo" class="form-control" rows="3" placeholder="Masukkan keterangan..."></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button (click)="modal.close()" type="button" class="btn btn-secondary">Batal</button>
+      <button [disabled]="addForm.invalid" type="submit" class="btn btn-primary">Simpan</button>
+    </div>
+  </form>
+</ng-template>
+
+<ng-template #updateContent let-modal>
+  <div class="modal-header">
+    <h1 class="modal-title fs-5">Ubah Data Pengeluaran Non Tunai</h1>
+    <button type="button" (click)="modal.close()" class="btn-close" aria-label="Close"></button>
+  </div>
+  <form #updateForm="ngForm" (ngSubmit)="onUpdateCashlessExpense(updateForm)">
+    <div class="modal-body">
+      <input type="hidden" name="id" ngModel="{{ cashlessExpense?.id }}">
+      <div class="form-group">
+        <label>Tanggal</label>
+        <input type="date" ngModel="{{ cashlessExpense?.date }}" name="date" class="form-control" id="updateDate" autocomplete="off" required>
+        <div *ngIf="errors?.date" class="is-invalid text-danger">{{ errors.date }}</div>
+      </div>
+<!--      <div class="form-group">-->
+<!--        <label>No BBK</label>-->
+<!--        <input type="text" ngModel="{{ cashlessExpense?.bbkNumber }}" name="bbkNumber" class="form-control" autocomplete="off" required>-->
+<!--      </div>-->
+      <div class="form-group">
+        <label>Akun</label>
+        <select ngModel="{{ cashlessExpense?.contract }}" name="contract" class="custom-select" required>
+          <option value="PENYALURAN_DANA_ZAKAT">PENYALURAN DANA ZAKAT</option>
+          <option value="PENYALURAN_DANA_INFAK_SEDEKAH">PENYALURAN DANA INFAK SEDEKAH</option>
+          <option value="PENYALURAN_DANA_SOSIAL_KEAGAMAAN_LAINNYA">PENYALURAN DANA SOSIAL KEAGAMAAN LAINNYA</option>
+          <option value="BEBAN_TUNJANGAN_NON_TUNAI">BEBAN TUNJANGAN NON TUNAI</option>
+        </select>
+        <div *ngIf="errors?.contract" class="is-invalid text-danger">{{ errors.contract }}</div>
+      </div>
+      <div class="form-group">
+        <label>Penyaluran</label>
+        <select ngModel="{{ cashlessExpense?.distribution }}" name="distribution" class="custom-select" required>
+          <option value="FAKIR">FAKIR</option>
+          <option value="MISKIN">MISKIN</option>
+          <option value="AMIL">AMIL</option>
+          <option value="MUALAF">MUALAF</option>
+          <option value="RIQOB">RIQOB</option>
+          <option value="GHARIMIN">GHARIMIN</option>
+          <option value="SABILILLAH">SABILILLAH</option>
+          <option value="IBNU_SABIL">IBNU SABIL</option>
+          <option value="ASRAMA_GRAY">ASRAMA GRAY</option>
+          <option value="GRAY_PEDULI_SESAMA">GRAY PEDULI SESAMA</option>
+          <option value="TANGGAP_BENCANA">TANGGAP BENCANA</option>
+          <option value="BAGIAN_AMIL_DARI_ZAKAT_NON_TUNAI">BAGIAN AMIL DARI ZAKAT NON TUNAI</option>
+          <option value="BAGIAN_AMIL_DARI_INFAK_DAN_SEDEKAH_NON_TUNAI">BAGIAN AMIL DARI INFAK DAN SEDEKAH NON TUNAI
+          </option>
+          <option value="BAGIAN_AMIL_DARI_DSKL_NON_TUNAI">BAGIAN AMIL DARI DSKL NON TUNAI</option>
+        </select>
+        <div *ngIf="errors?.distribution" class="is-invalid text-danger">{{ errors.distribution }}</div>
+      </div>
+      <div class="form-group">
+        <label>Barang Keluar</label>
+        <select multiple [ngModel]="cashlessExpense!.items" name="items" class="custom-select" required>
+          <option value="BERAS_KG">BERAS KG</option>
+          <option value="MIE_PCS">MIE PCS</option>
+          <option value="TERIGU_KG">TERIGU KG</option>
+          <option value="MINYAK_GORENG_LITER">MINYAK GORENG LITER</option>
+          <option value="GULA_KG">GULA KG</option>
+          <option value="TEH_ISI_25_ATAU_30">TEH ISI 25 ATAU 30</option>
+          <option value="TEH_ISI_50">TEH ISI 50</option>
+          <option value="TEH_ISI_100">TEH ISI 100</option>
+          <option value="SUSU_KECIL">SUSU KECIL</option>
+          <option value="SUSU_BESAR">SUSU BESAR</option>
+          <option value="SARDEN_KECIL">SARDEN KECIL</option>
+          <option value="SARDEN_BEASAR">SARDEN BEASAR</option>
+          <option value="DONASI_SELAIN_13">DONASI SELAIN 13</option>
+          <option value="PERALATAN">PERALATAN</option>
+          <option value="BARANG_BERHARGA">BARANG BERHARGA</option>
+          <option value="KAMBING_QURBAN">KAMBING QURBAN</option>
+          <option value="SAPI_QURBAN">SAPI QURBAN</option>
+          <option value="KENDARAAN_RODA_2">KENDARAAN RODA 2</option>
+          <option value="KENDARAAN_RODA_4">KENDARAAN RODA 4</option>
+          <option value="TANAH">TANAH</option>
+          <option value="BANGUNAN">BANGUNAN</option>
+        </select>
+        <div *ngIf="errors?.items" class="is-invalid text-danger">{{ errors.items }}</div>
+      </div>
+      <div class="form-group">
+        <label>Foto BBK</label>
+        <input type="file" ngModel (change)="onFileSelected($event)" name="bbkPhoto" class="form-control" autocomplete="off" required>
+        <img class="mt-1" [src]="cashlessExpense?.bbkPhoto" width="100" alt="Foto BBK">
+      </div>
+      <div class="form-group">
+        <label>Keterangan</label>
+        <textarea ngModel="{{ cashlessExpense?.otherInfo }}" name="otherInfo" class="form-control" rows="3" placeholder="Masukkan keterangan..."></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button (click)="modal.close()" type="button" class="btn btn-secondary">Batal</button>
+      <button [disabled]="updateForm.invalid" type="submit" class="btn btn-primary">Simpan</button>
+    </div>
+  </form>
+</ng-template>
+
+<ng-template #deleteContent let-modal>
+  <div class="modal-header">
+    <h1 class="modal-title fs-5">Konfirmasi Hapus</h1>
+    <button type="button" (click)="modal.close()" class="btn-close" aria-label="Close"></button>
+  </div>
+  <div class="modal-body">
+    Anda yakin ingin menghapus data?
+    <!--    <span class="badge rounded-pill text-bg-success">-->
+    <!--      {{ cashlessExpense?.contract }}-->
+    <!--    </span><br><br>-->
+  </div>
+  <div class="modal-footer">
+    <button (click)="modal.close()" type="button" class="btn btn-secondary">Batal</button>
+    <button (click)="onDeleteCashlessExpense(cashlessExpense!.id)" type="button" class="btn btn-danger" id="delete">
+      Hapus
+    </button>
+  </div>
+</ng-template>
+
+<ng-template #openImage let-modal>
+  <div class="modal-header">
+    <h1 class="modal-title fs-5">Foto BBK</h1>
+    <button type="button" (click)="modal.close()" class="btn-close" aria-label="Close"></button>
+  </div>
+  <div class="modal-body text-center">
+    <img [src]="url" width="100%" alt="Foto BBK">
+  </div>
+</ng-template>

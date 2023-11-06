@@ -1,0 +1,67 @@
+<div class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <h1  class="m-0">Riwayat Transaksi </h1>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header">
+        <div class="d-flex justify-content-between align-items-center">
+
+<!--          <form >-->
+<!--            <div class="input-group">-->
+<!--              <input #search type="text" class="form-control form-control-sm" placeholder="Search">-->
+<!--              <div class="input-group-append">-->
+<!--                <button type="submit" class="btn btn-primary btn-sm">-->
+<!--                  <span class="fas fa-search"></span>-->
+<!--                </button>-->
+<!--              </div>-->
+<!--            </div>-->
+<!--          </form>-->
+        </div>
+      </div>
+
+      <div class="card-body table-responsive p-0">
+        <table class="table table-striped">
+          <thead>
+          <tr>
+            <th>No</th>
+            <th>Tanggal</th>
+            <th>Alamat</th>
+            <th>No Telepon</th>
+            <th>Akad</th>
+            <th>Bank Transfer</th>
+            <th>Barang Diterima</th>
+            <th>Nominal</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let t of allDonations | slice: (currentPage - 1) * pageSize : currentPage * pageSize; let i = index">
+            <td>{{ (currentPage - 1) * pageSize + i + 1 }}</td>
+            <td>{{ t.date | date: 'dd/MM/yyyy' }}</td>
+            <td>{{t.donor.user.workArea}}</td>
+            <td>{{t.donor.phoneNumber}}</td>
+            <td>{{t.contract}}</td>
+            <td>{{t.transfersAccount}}</td>
+            <td>{{t.items}}</td>
+            <td>Rp {{ t.amount | number: '1.0-0' }}</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="mt-3 ms-3">
+<!--        <ngb-pagination-->
+<!--          [(page)]="currentPage"-->
+<!--          [pageSize]="pageSize"-->
+<!--          [collectionSize]="donors.length">-->
+<!--        </ngb-pagination>-->
+      </div>
+    </div>
+
+  </div>
+</div>

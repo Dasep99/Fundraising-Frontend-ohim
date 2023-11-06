@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.19.1.final using JasperReports Library version 6.19.1-867c00bf88cd4d784d404379d6c05e1b419e8a4c  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="cash-donation-receipt" pageWidth="609" pageHeight="212" orientation="Landscape" columnWidth="553" leftMargin="28" rightMargin="28" topMargin="28" bottomMargin="28" uuid="275524d3-b3f1-49e0-bca1-1b52d9ed97f6">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+	<property name="com.jaspersoft.studio.unit." value="mm"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="mm"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="mm"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="mm"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="mm"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="mm"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="mm"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="mm"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="mm"/>
+	<parameter name="receiptNumber" class="java.lang.String"/>
+	<parameter name="donorName" class="java.lang.String"/>
+	<parameter name="amountLong" class="java.lang.String"/>
+	<parameter name="description" class="java.lang.String"/>
+	<parameter name="amountShort" class="java.lang.String"/>
+	<parameter name="date" class="java.lang.String"/>
+	<parameter name="receiverName" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<detail>
+		<band height="156" splitType="Stretch">
+			<image hAlign="Center" vAlign="Middle">
+				<reportElement x="0" y="0" width="210" height="30" uuid="ac185f8b-5b2e-4d5b-915f-2f8c0596f5ec"/>
+				<imageExpression><![CDATA["/src/main/frontend/src/assets/img/receipt-logo.png"]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement x="210" y="0" width="358" height="20" uuid="7a6f7801-bd2a-49d3-8b68-b5c551f3e57a"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA["No. : " + $P{receiptNumber}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="30" width="210" height="25" uuid="fec02c83-8385-4085-918d-597ab9deeb1f"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[Menyalurkan ZISWAF di Graha Yatim & Dhu'afa kini lebih mudah
+melalui aplikasi e-wallet pilihan Anda (LinkAja, Ovo, Gopay, Dana, dll.)
+dengan SCAN QR CODE berikut :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="104" width="210" height="14" uuid="971c16c5-2e95-454e-b8b6-56b76abb4250"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[Kantor Cabang Asrama Graha Yatim & Dhu'afa (GRAY)
+Yayasan Harapan Robbani]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="121" width="70" height="8" uuid="fb8fe9cc-78f5-48a0-8c14-548b24def0ba"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[1 Cirebon Jawa Barat]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="129" width="70" height="8" uuid="9c5c6f0e-1c0e-41f9-b35a-5349b6b50750">
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[2 Bekasi Jawa Barat]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="70" y="121" width="70" height="8" uuid="42373417-526c-4528-8c1c-f5dbf3ee1788">
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[3 DKI Jakarta]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="70" y="129" width="70" height="8" uuid="ab08a4b0-c887-43eb-a3b1-b8ccc7039e2a">
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[4 Kuningan Jawa Barat]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="140" y="119" width="70" height="8" uuid="4d7084c2-48b5-42b9-9940-18f2796305b3">
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[5 Surabaya Jawa Timur]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="140" y="127" width="70" height="8" uuid="98024401-7301-4841-b800-11b85d10535f">
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[6 Kalimantan Selatan]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="140" width="90" height="8" uuid="6443acdc-2e75-4bba-9737-284df4e96934"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="5" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Facebook :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="90" y="140" width="70" height="8" uuid="34208547-a196-4566-a112-edbc46fbd196"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="5" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Instagram :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="160" y="140" width="50" height="8" uuid="9d551aae-f0df-429c-bb66-800baf4ba33a"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="5" isBold="true"/>
+				</textElement>
+				<text><![CDATA[WhatsApp :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="148" width="90" height="8" uuid="110b60ca-20e1-4eac-8cfe-3dcc3a839121"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="5" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Graha Yatim & Dhu'afa (GRAY)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="90" y="148" width="70" height="8" uuid="3b30d98d-477f-4ae5-a06b-2aef5ddef3ec"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[Graha_Yatim_Dhuafa]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="160" y="148" width="50" height="8" uuid="dec338a1-da60-4424-8f75-756ba17bfc2d"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[081 223 000 253]]></text>
+			</staticText>
+		</band>
+	</detail>
+</jasperReport>

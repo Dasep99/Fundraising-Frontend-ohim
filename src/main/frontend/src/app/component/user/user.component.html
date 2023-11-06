@@ -1,0 +1,264 @@
+<div class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <h1 class="m-0">Data User</h1>
+      </div>
+      <div class="alert alert-success" *ngIf="alertMessage">
+        {{ alertMessage }}
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header">
+        <div class="d-flex justify-content-between align-items-center">
+          <button (click)="openAddModal(addContent)" class="btn btn-primary btn-sm m-1">
+            <i class="nav-solid fas fa-plus"></i>
+            Tambah Data
+          </button>
+          <form (ngSubmit)="onSearch(search.value)">
+            <div class="input-group">
+              <input #search type="text" class="form-control form-control-sm" placeholder="Search">
+              <div class="input-group-append">
+                <button type="submit" class="btn btn-primary btn-sm">
+                  <span class="fas fa-search"></span>
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div class="card-body table-responsive p-0">
+        <table class="table table-hover">
+          <thead>
+          <tr>
+            <th>No</th>
+            <th>Nama</th>
+            <th>Level</th>
+            <th>Area Kerja</th>
+            <th>Aksi</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let d of users | slice: (currentPage - 1) * pageSize : currentPage * pageSize; let i = index">
+            <td>{{ (currentPage - 1) * pageSize + i + 1 }}</td>
+            <td>{{ d.name }}</td>
+            <td>{{ d.role.replaceAll('_', ' ') }}</td>
+            <td>{{ d.workArea.replaceAll('_', ' ') }}</td>
+            <td>
+              <button (click)="openUpdateModal(updateContent, d)" class="btn btn-warning btn-sm" title="Ubah">
+                <i class="nav-solid fas fa-pen"></i>
+              </button>
+              <button (click)="openDeleteModal(deleteContent, d)" class="btn btn-danger btn-sm ml-1" title="Hapus">
+                <i class="nav-solid fas fa-trash"></i>
+              </button>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="mt-3 ms-3">
+        <ngb-pagination
+          [(page)]="currentPage"
+          [pageSize]="pageSize"
+          [collectionSize]="users.length">
+        </ngb-pagination>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #addContent let-modal>
+  <div class="modal-header">
+    <h1 class="modal-title fs-5">Tambah Data User</h1>
+    <button type="button" (click)="modal.close()" class="btn-close" aria-label="Close"></button>
+  </div>
+  <form #addForm="ngForm" (ngSubmit)="onAddUser(addForm)">
+    <div class="modal-body">
+      <div class="form-group">
+        <label>Nama</label>
+        <input type="text" ngModel name="name" class="form-control" id="addName" autocomplete="off" required>
+        <div *ngIf="errors?.name" class="is-invalid text-danger">{{ errors.name }}</div>
+      </div>
+      <div class="form-group">
+        <label>Username</label>
+        <input type="text" ngModel name="username" class="form-control" autocomplete="off" required>
+        <div *ngIf="errors?.username" class="is-invalid text-danger">{{ errors.username }}</div>
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input #password type="password" ngModel name="password" class="form-control" autocomplete="off" required>
+        <div *ngIf="errors?.password" class="is-invalid text-danger">{{ errors.password }}</div>
+      </div>
+      <div class="form-group">
+        <label>Konfirmasi Password</label>
+        <input #confirmPassword type="password" ngModel name="confirmPassword" class="form-control" autocomplete="off" required>
+        <div *ngIf="confirmPassword.value !== password.value" class="is-invalid text-danger">Konfirmasi password tidak
+          sesuai
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Level</label>
+        <select #role ngModel name="role" class="custom-select" required>
+          <option value="">-- Pilih Level --</option>
+          <option value="ADMIN_PENERIMAAN">ADMIN PENERIMAAN</option>
+          <option value="FRONT_OFFICE">FRONT OFFICE</option>
+          <option value="MANAGER_FUNDRAISING">MANAGER FUNDRAISING</option>
+          <option value="TIM_JEMPUT_DONASI">TIM JEMPUT DONASI</option>
+          <option value="PETUGAS_PUNDI">PETUGAS PUNDI</option>
+          <option value="MARKETING_KOMUNIKASI">MARKETING KOMUNIKASI</option>
+        </select>
+        <div *ngIf="errors?.role" class="is-invalid text-danger">{{ errors.role }}</div>
+      </div>
+      <div class="form-group">
+        <label>Area Kerja</label>
+        <select ngModel name="workArea" class="custom-select" required>
+          <option value="">-- Pilih Area Kerja --</option>
+          <ng-container *ngIf="role.value === 'ADMIN_PENERIMAAN' || role.value === 'MANAGER_FUNDRAISING' || role.value === 'MARKETING_KOMUNIKASI'">
+            <option value="PUSAT">PUSAT</option>
+          </ng-container>
+          <ng-container *ngIf="role.value === 'FRONT_OFFICE'">
+            <option value="G0">G0</option>
+            <option value="G1">G1</option>
+            <option value="G2">G2</option>
+            <option value="G3">G3</option>
+            <option value="G4">G4</option>
+            <option value="G5">G5</option>
+            <option value="G6">G6</option>
+            <option value="G7">G7</option>
+            <option value="G8">G8</option>
+            <option value="G9">G9</option>
+            <option value="G10">G10</option>
+            <option value="G11">G11</option>
+            <option value="G12">G12</option>
+            <option value="G13">G13</option>
+            <option value="G14">G14</option>
+            <option value="G15">G15</option>
+            <option value="G16">G16</option>
+            <option value="G17">G17</option>
+            <option value="G18">G18</option>
+            <option value="G19">G19</option>
+            <option value="G20">G20</option>
+            <option value="G21">G21</option>
+          </ng-container>
+          <ng-container *ngIf="role.value === 'TIM_JEMPUT_DONASI' || role.value === 'PETUGAS_PUNDI'">
+            <option value="CIREBON">CIREBON</option>
+            <option value="BEKASI">BEKASI</option>
+            <option value="JAKARTA">JAKARTA</option>
+            <option value="KUNINGAN">KUNINGAN</option>
+            <option value="MAJALENGKA">MAJALENGKA</option>
+            <option value="KALIMANTAN">KALIMANTAN</option>
+            <option value="SURABAYA">SURABAYA</option>
+          </ng-container>
+        </select>
+        <div *ngIf="errors?.workArea" class="is-invalid text-danger">{{ errors.workArea }}</div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button (click)="modal.close()" type="button" class="btn btn-secondary">Batal</button>
+      <button [disabled]="addForm.invalid" type="submit" class="btn btn-primary">Simpan</button>
+    </div>
+  </form>
+</ng-template>
+
+<ng-template #updateContent let-modal>
+  <div class="modal-header">
+    <h1 class="modal-title fs-5">Ubah Data User</h1>
+    <button type="button" (click)="modal.close()" class="btn-close" aria-label="Close"></button>
+  </div>
+  <form #updateForm="ngForm" (ngSubmit)="onUpdateUser(updateForm.value)">
+    <div class="modal-body">
+      <input type="hidden" name="id" ngModel="{{ user?.id }}">
+      <div class="form-group">
+        <label>Nama</label>
+        <input type="text" ngModel="{{ user?.name }}" name="name" class="form-control" id="updateName" autocomplete="off" required>
+        <div *ngIf="errors?.name" class="is-invalid text-danger">{{ errors.name }}</div>
+      </div>
+      <div class="form-group">
+        <label>Username</label>
+        <input type="text" ngModel="{{ user?.username }}" name="username" class="form-control" autocomplete="off" required>
+        <div *ngIf="errors?.username" class="is-invalid text-danger">{{ errors.username }}</div>
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" ngModel="{{ user?.password }}" name="password" class="form-control" autocomplete="off" required>
+        <div *ngIf="errors?.password" class="is-invalid text-danger">{{ errors.password }}</div>
+      </div>
+      <div class="form-group">
+        <label>Level</label>
+        <select ngModel="{{ user?.role }}" name="role" class="custom-select" required>
+          <option value="ADMIN_PENERIMAAN">ADMIN PENERIMAAN</option>
+          <option value="FRONT_OFFICE">FRONT OFFICE</option>
+          <option value="MANAGER_FUNDRAISING">MANAGER FUNDRAISING</option>
+          <option value="TIM_JEMPUT_DONASI">TIM JEMPUT DONASI</option>
+          <option value="PETUGAS_PUNDI">PETUGAS PUNDI</option>
+          <option value="MARKETING_KOMUNIKASI">MARKETING KOMUNIKASI</option>
+        </select>
+        <div *ngIf="errors?.role" class="is-invalid text-danger">{{ errors.role }}</div>
+      </div>
+      <div class="form-group">
+        <label>Area Kerja</label>
+        <select ngModel="{{ user?.workArea }}" name="workArea" class="custom-select" disabled>
+          <option value="PUSAT">PUSAT</option>
+          <option value="G0">G0</option>
+          <option value="G1">G1</option>
+          <option value="G2">G2</option>
+          <option value="G3">G3</option>
+          <option value="G4">G4</option>
+          <option value="G5">G5</option>
+          <option value="G6">G6</option>
+          <option value="G7">G7</option>
+          <option value="G8">G8</option>
+          <option value="G9">G9</option>
+          <option value="G10">G10</option>
+          <option value="G11">G11</option>
+          <option value="G12">G12</option>
+          <option value="G13">G13</option>
+          <option value="G14">G14</option>
+          <option value="G15">G15</option>
+          <option value="G16">G16</option>
+          <option value="G17">G17</option>
+          <option value="G18">G18</option>
+          <option value="G19">G19</option>
+          <option value="G20">G20</option>
+          <option value="G21">G21</option>
+          <option value="CIREBON">CIREBON</option>
+          <option value="BEKASI">BEKASI</option>
+          <option value="JAKARTA">JAKARTA</option>
+          <option value="KUNINGAN">KUNINGAN</option>
+          <option value="MAJALENGKA">MAJALENGKA</option>
+          <option value="KALIMANTAN">KALIMANTAN</option>
+          <option value="SURABAYA">SURABAYA</option>
+        </select>
+        <div *ngIf="errors?.workArea" class="is-invalid text-danger">{{ errors.workArea }}</div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button (click)="modal.close()" type="button" class="btn btn-secondary">Batal</button>
+      <button [disabled]="updateForm.invalid" type="submit" class="btn btn-primary">Simpan</button>
+    </div>
+  </form>
+</ng-template>
+
+<ng-template #deleteContent let-modal>
+  <div class="modal-header">
+    <h1 class="modal-title fs-5">Konfirmasi Hapus</h1>
+    <button type="button" (click)="modal.close()" class="btn-close" aria-label="Close"></button>
+  </div>
+  <div class="modal-body">
+    Anda yakin ingin menghapus data?
+    <!--    <span class="badge rounded-pill text-bg-success">-->
+    <!--     {{ user?.name }}-->
+    <!--    </span><br><br>-->
+  </div>
+  <div class="modal-footer">
+    <button (click)="modal.close()" type="button" class="btn btn-secondary">Batal</button>
+    <button (click)="onDeleteUser(user!.id)" type="button" class="btn btn-danger" id="delete">
+      Hapus
+    </button>
+  </div>
+</ng-template>

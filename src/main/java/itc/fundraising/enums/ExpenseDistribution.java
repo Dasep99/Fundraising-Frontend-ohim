@@ -1,0 +1,20 @@
+package itc.fundraising.enums;
+
+public enum ExpenseDistribution {
+
+    FAKIR,
+    MISKIN,
+    AMIL,
+    MUALAF,
+    RIQOB,
+    GHARIMIN,
+    SABILILLAH,
+    IBNU_SABIL,
+    ASRAMA_GRAY,
+    GRAY_PEDULI_SESAMA,
+    TANGGAP_BENCANA,
+    BAGIAN_AMIL_DARI_ZAKAT_NON_TUNAI,
+    BAGIAN_AMIL_DARI_INFAK_DAN_SEDEKAH_NON_TUNAI,
+    BAGIAN_AMIL_DARI_DSKL_NON_TUNAI,
+
+}
