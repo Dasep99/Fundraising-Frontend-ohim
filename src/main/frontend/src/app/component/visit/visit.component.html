@@ -1,0 +1,241 @@
+<div class="row my-2 align-items-center">
+  <div class="col-sm-6">
+    <h3 class="m-0">Data Kunjungan Tamu</h3>
+  </div>
+  <div class="col-sm-6 d-sm-block d-none">
+    <ol class="breadcrumb float-sm-right m-0">
+      <li class="breadcrumb-item">{{ userRole.replaceAll('_', ' ') }}</li>
+      <li class="breadcrumb-item">Data Kunjungan Tamu</li>
+    </ol>
+  </div>
+</div>
+<div class="row" *ngIf="alertMessage">
+  <div class="col-12">
+    <div class="alert alert-success mb-2">
+      {{ alertMessage }}
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header">
+        <div class="d-flex justify-content-between align-items-center">
+          <button *ngIf="userRole === 'FRONT_OFFICE'" (click)="openAddModal(addContent)" class="btn btn-primary btn-sm m-1">
+            <i class="fas fa-plus"></i>
+            Tambah Data
+          </button>
+          <form (ngSubmit)="onSearch(search.value)">
+            <div class="input-group">
+              <input #search type="text" class="form-control form-control-sm" placeholder="Search">
+              <div class="input-group-append">
+                <button type="submit" class="btn btn-primary btn-sm">
+                  <span class="fas fa-search"></span>
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div class="card-body table-responsive p-0">
+        <table class="table table-hover table-bordered">
+          <thead>
+          <tr class="text-center border-top-0">
+            <th>No</th>
+            <th class="min-w-9" *ngIf="userRole === 'ADMIN_PENERIMAAN'">Unit</th>
+            <th>Tanggal</th>
+            <th class="min-w-10">ID Donatur</th>
+            <th class="min-w-15">Nama Donatur</th>
+            <th class="min-w-12">Keperluan</th>
+            <th class="min-w-10">Foto</th>
+            <th *ngIf="userRole === 'FRONT_OFFICE'">
+              Manajemen
+            </th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let d of visits | slice: (currentPage - 1) * pageSize : currentPage * pageSize; let i = index">
+            <td>{{ (currentPage - 1) * pageSize + i + 1 }}</td>
+            <td *ngIf="userRole === 'ADMIN_PENERIMAAN'">{{ d.user.workArea }}</td>
+            <td>{{ d.date | date: 'dd/MM/yyyy' }}</td>
+            <td>{{ d.donor.donorId }}</td>
+            <td>{{ d.donor.name }}</td>
+            <td>{{ d.purpose.replaceAll('_', ' ') }}</td>
+            <td class="text-center">
+              <button (click)="openViewImage(openImage, d)" class="btn btn-info btn-sm">
+                <i class="nav-icon fas fa-copy"></i>
+                Lihat Foto
+              </button>
+            </td>
+            <td *ngIf="userRole === 'FRONT_OFFICE'">
+              <div class="d-flex">
+                <button (click)="openUpdateModal(updateContent, d)" class="btn btn-warning btn-sm" title="Ubah">
+                  <i class="fas fa-pen"></i>
+                </button>
+                <button (click)="openDeleteModal(deleteContent, d)" class="btn btn-danger btn-sm ml-1" title="Hapus">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="mt-3 ms-3">
+        <ngb-pagination
+          [(page)]="currentPage"
+          [pageSize]="pageSize"
+          [collectionSize]="visits.length">
+        </ngb-pagination>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<ng-template #addContent let-modal>
+  <div class="modal-header">
+    <h1 class="modal-title fs-5">Tambah Data Kunjungan Tamu</h1>
+    <button type="button" (click)="modal.close()" class="btn-close" aria-label="Close"></button>
+  </div>
+  <div class="modal-body">
+    <form #addForm="ngForm" (ngSubmit)="onAddVisit(addForm)" id="addForm">
+      <div class="form-group">
+        <label class="text-sm">Tanggal <span class="text-danger">*</span></label>
+        <input type="date" ngModel name="date" class="form-control form-control-sm" id="focusAdd" autocomplete="off" required>
+        <div *ngIf="errors?.date" class="is-invalid text-danger">{{ errors.date }}</div>
+      </div>
+      <div class="form-group">
+        <label class="text-sm">Donatur <span class="text-danger">*</span></label>
+        <select #donorSelect ngModel="{{ donorSelect.value }}" name="donorId" class="form-control form-control-sm form-select select2" required>
+          <option value="">-- Pilih Donatur --</option>
+          <option *ngFor="let donor of donors" [value]="donor.id">({{ donor.donorId }}) {{ donor.name }}</option>
+        </select>
+        <div *ngIf="errors?.donorId" class="is-invalid text-danger">{{ errors.donorId }}</div>
+      </div>
+      <div class="form-group">
+        <label class="text-sm">Keperluan <span class="text-danger">*</span></label>
+        <select #purpose ngModel name="purpose" class="form-control form-control-sm form-select" required>
+          <option value="">-- Pilih Keperluan --</option>
+          <option value="TANYA_TANYA">TANYA TANYA</option>
+          <option value="BOOKING_ACARA">BOOKING ACARA</option>
+          <option value="LAINNYA">LAINNYA</option>
+        </select>
+        <div *ngIf="errors?.purpose && purpose.value === ''" class="is-invalid text-danger">{{ errors.purpose }}</div>
+      </div>
+      <div class="form-group" *ngIf="purpose.value === 'LAINNYA'">
+        <label class="text-sm">Keperluan Lainnya <span class="text-danger">*</span></label>
+        <input type="text" ngModel name="otherPurpose" class="form-control form-control-sm" autocomplete="off" required>
+        <div *ngIf="errors?.purpose" class="is-invalid text-danger">{{ errors.purpose }}</div>
+      </div>
+      <div class="form-group">
+        <label class="text-sm">Foto <span class="text-danger">*</span></label>
+        <input type="file" (change)="onFileSelected($event)" ngModel name="photo" class="form-control form-control-sm" autocomplete="off" required>
+        <div *ngIf="errors === 'Required part \'file\' is not present.'" class="is-invalid text-danger">
+          Foto wajib diisi
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <div class="d-flex justify-content-between align-items-center w-100">
+      <div>
+        <span class="text-danger">*</span>
+        <span class="text-sm"> Wajib diisi</span>
+      </div>
+      <div>
+        <button (click)="modal.close()" type="button" class="btn btn-secondary">Batal</button>
+        <button [disabled]="addForm.invalid" type="submit" form="addForm" class="btn btn-primary ml-2">Simpan</button>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #updateContent let-modal>
+  <div class="modal-header">
+    <h1 class="modal-title fs-5">Ubah Data Kunjungan Tamu</h1>
+    <button type="button" (click)="modal.dismiss()" class="btn-close" aria-label="Close"></button>
+  </div>
+  <div class="modal-body">
+    <form #updateForm="ngForm" (ngSubmit)="onUpdateVisit(updateForm)" id="updateForm">
+      <input type="hidden" name="id" ngModel="{{ visit?.id }}">
+      <div class="form-group">
+        <label class="text-sm">Tanggal <span class="text-danger">*</span></label>
+        <input type="date" ngModel="{{ visit!.date }}" name="date" class="form-control form-control-sm" id="focusUpdate" autocomplete="off" required>
+        <div *ngIf="errors?.date" class="is-invalid text-danger">{{ errors.date }}</div>
+      </div>
+      <div class="form-group">
+        <label class="text-sm">Donatur <span class="text-danger">*</span></label>
+        <select #donorSelect [ngModel]="visit!.donor!.id" ngModel="{{ donorSelect.value }}" name="donorId" class="form-control form-select select2" required>
+          <option *ngFor="let donor of donors" [value]="donor.id">({{ donor.donorId }}) {{ donor.name }}</option>
+        </select>
+        <div *ngIf="errors?.donorId" class="is-invalid text-danger">{{ errors.donorId }}</div>
+      </div>
+      <div class="form-group">
+        <label class="text-sm">Keperluan <span class="text-danger">*</span></label>
+        <select #purpose ngModel="{{ visit?.purpose }}" name="purpose" class="form-control form-control-sm form-select" required>
+          <option value="TANYA_TANYA">TANYA TANYA</option>
+          <option value="BOOKING_ACARA">BOOKING ACARA</option>
+          <option value="LAINNYA">LAINNYA</option>
+        </select>
+        <div *ngIf="errors?.purpose && purpose.value === ''" class="is-invalid text-danger">{{ errors.purpose }}</div>
+      </div>
+      <div class="form-group" *ngIf="purpose.value === 'LAINNYA'">
+        <label class="text-sm">Keperluan Lainnya <span class="text-danger">*</span></label>
+        <input type="text" ngModel="{{ visit?.otherPurpose }}" name="otherPurpose" class="form-control form-control-sm" autocomplete="off" required>
+        <div *ngIf="errors?.purpose" class="is-invalid text-danger">{{ errors.purpose }}</div>
+      </div>
+      <div class="form-group">
+        <label class="text-sm">Foto
+          <span class="fw-normal font-italic">(kosongkan jika tidak ingin mengubah)</span>
+        </label>
+        <input type="file" ngModel name="photo" (change)="onFileSelected($event)" class="form-control form-control-sm" autocomplete="off">
+        <img class="w-100 mt-1" [src]="visit?.photo" alt="Foto">
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <div class="d-flex justify-content-between align-items-center w-100">
+      <div>
+        <span class="text-danger">*</span>
+        <span class="text-sm"> Wajib diisi</span>
+      </div>
+      <div>
+        <button (click)="modal.dismiss()" type="button" class="btn btn-secondary">Batal</button>
+        <button [disabled]="updateForm.invalid" type="submit" form="updateForm" class="btn btn-primary ml-2">Simpan
+        </button>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #deleteContent let-modal>
+  <div class="modal-header">
+    <h1 class="modal-title fs-5">Konfirmasi Hapus</h1>
+    <button type="button" (click)="modal.close()" class="btn-close" aria-label="Close"></button>
+  </div>
+  <div class="modal-body">
+    Anda yakin ingin menghapus data?
+    <!--    <span class="badge rounded-pill text-bg-success">-->
+    <!--      {{ visit?.name }}-->
+    <!--    </span><br><br>-->
+  </div>
+  <div class="modal-footer">
+    <button (click)="modal.close()" type="button" class="btn btn-dark">Batal</button>
+    <button (click)="onDeleteVisit(visit!.id)" type="button" class="btn btn-danger" id="delete">
+      Hapus
+    </button>
+  </div>
+</ng-template>
+
+<ng-template #openImage let-modal>
+  <div class="modal-header">
+    <h1 class="modal-title fs-5">Foto</h1>
+    <button type="button" (click)="modal.close()" class="btn-close" aria-label="Close"></button>
+  </div>
+  <div class="modal-body text-center">
+    <img [src]="visit?.photo" width="100%" alt="Foto">
+  </div>
+</ng-template>

@@ -1,0 +1,630 @@
+<div class="row my-2 align-items-center">
+  <div class="col-sm-6">
+    <h3 class="m-0">Data Donatur</h3>
+  </div>
+  <div class="col-sm-6 d-sm-block d-none">
+    <ol class="breadcrumb float-sm-right m-0">
+      <li class="breadcrumb-item">{{ userRole.replaceAll('_', ' ') }}</li>
+      <li class="breadcrumb-item">Data Donatur</li>
+    </ol>
+  </div>
+</div>
+<div class="row" *ngIf="alertMessage">
+  <div class="col-12">
+    <div class="alert alert-success mb-2">
+      {{ alertMessage }}
+      <div *ngIf="donateMessage">
+        Lihat data <a routerLink="{{ donateMessage }}" class="alert-link">di sini</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header">
+        <div class="d-flex justify-content-between align-items-center">
+          <button *ngIf="userRole === 'FRONT_OFFICE' || userRole === 'TIM_JEMPUT_DONASI' || userRole === 'CRM'" (click)="openAddModal(addContent)" class="btn btn-primary btn-sm m-1">
+            <i class="fas fa-plus"></i>
+            Tambah Data
+          </button>
+          <form (ngSubmit)="onSearch(search.value)">
+            <div class="input-group">
+              <input #search type="text" class="form-control form-control-sm" placeholder="Search">
+              <div class="input-group-append">
+                <button type="submit" class="btn btn-primary btn-sm">
+                  <span class="fas fa-search"></span>
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div class="card-body table-responsive p-0">
+        <table class="table table-hover table-bordered">
+          <thead>
+          <tr class="text-center border-top-0">
+            <th class="align-middle">No</th>
+            <th class="align-middle" *ngIf="userRole === 'FRONT_OFFICE' || userRole === 'TIM_JEMPUT_DONASI' || userRole === 'CRM'">
+              Donasi
+            </th>
+            <th class="min-w-10">ID Donatur</th>
+            <th class="min-w-15">Nama</th>
+            <th>JK</th>
+            <th>Tgl Lahir</th>
+            <!--            <th>Alamat</th>-->
+            <th class="min-w-12">Jl/Kp/Blok/Dusun</th>
+            <th class="min-w-12">Desa/Kelurahan</th>
+            <th class="min-w-12">Kecamatan</th>
+            <th class="min-w-12">Kabupaten/Kota</th>
+            <th class="min-w-12">Provinsi</th>
+            <th class="min-w-10">NIK</th>
+            <th class="min-w-9">No Telepon</th>
+            <th class="min-w-10">Email</th>
+            <th class="min-w-10">Pekerjaan</th>
+            <th class="min-w-10">Segmentasi Usia</th>
+            <th class="min-w-9">Jenis Donatur</th>
+            <th class="min-w-10">Info Lainnya</th>
+            <th *ngIf="userRole === 'FRONT_OFFICE' || userRole === 'TIM_JEMPUT_DONASI' || userRole === 'CRM'">
+              Manajemen
+            </th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let d of donors | slice: (currentPage - 1) * pageSize : currentPage * pageSize; let i = index">
+            <td>{{ (currentPage - 1) * pageSize + i + 1 }}</td>
+            <td *ngIf="userRole === 'FRONT_OFFICE' || userRole === 'TIM_JEMPUT_DONASI' || userRole === 'CRM'">
+              <div class="d-flex">
+                <button (click)="openAddCashDonation(cashDonationContent, d)" class="btn btn-success btn-sm" title="Donasi Cash"
+                        *ngIf="userRole === 'FRONT_OFFICE' || userRole === 'TIM_JEMPUT_DONASI'">
+                  <i class="fas fa-donate"></i>
+                </button>
+                <button (click)="openAddTransferDonation(transferDonationContent, d)" class="btn btn-secondary btn-sm ml-1" title="Donasi Transfer"
+                        *ngIf="userRole === 'FRONT_OFFICE' || userRole === 'CRM'">
+                  <i class="fas fa-credit-card"></i>
+                </button>
+                <!--                <button (click)="openAddCashlessDonation(cashlessDonationContent, d)" class="btn btn-danger btn-sm ml-1" title="Donasi Non Tunai"-->
+                <!--                        *ngIf="userRole === 'FRONT_OFFICE'">-->
+                <!--                  <i class="fas fa-hand-holding-water"></i>-->
+                <!--                </button>-->
+                <button (click)="openAddVisit(visitContent, d)" class="btn btn-primary btn-sm ml-1" title="Bertamu"
+                        *ngIf="userRole === 'FRONT_OFFICE'">
+                  <i class="fas fa-house-user"></i>
+                </button>
+              </div>
+            </td>
+            <td>{{ d.donorId }}</td>
+            <td>{{ d.name }}</td>
+            <td>{{ d.gender }}</td>
+            <td>{{ d.birthDate | date: 'dd/MM/yyyy' }}</td>
+            <!--            <td>{{ d.address }}</td>-->
+            <td>{{ d.street }}</td>
+            <td>{{ d.village?.name }}</td>
+            <td>{{ d.district?.name }}</td>
+            <td>{{ d.regency?.name }}</td>
+            <td>{{ d.province?.name }}</td>
+            <td>{{ d.nik }}</td>
+            <td>{{ d.phoneNumber }}</td>
+            <td>{{ d.email }}</td>
+            <td>{{ d.job }}</td>
+            <td>
+              <span class="badge"
+                    [ngClass]="{'badge-danger': d.ageSegmentation === 'Baby Boomers',
+                    'badge-warning': d.ageSegmentation === 'Gen X',
+                    'badge-success': d.ageSegmentation === 'Gen Y',
+                    'badge-primary': d.ageSegmentation === 'Gen Z',
+                    'badge-secondary': d.ageSegmentation === 'Gen Alpha'}">
+                {{ d.ageSegmentation }}
+              </span>
+            </td>
+            <td>
+              <span class="badge"
+                    [ngClass]="{'badge-secondary': d.type === 'RETAIL',
+                    'badge-primary': d.type === 'KOMUNITAS',
+                    'badge-success': d.type === 'CORPORATE'}">
+                {{ d.type }}
+              </span>
+            </td>
+            <td>{{ d.otherInfo }}</td>
+            <td *ngIf="userRole === 'FRONT_OFFICE' || userRole === 'TIM_JEMPUT_DONASI' || userRole === 'CRM'">
+              <div class="d-flex">
+                <button (click)="openUpdateModal(updateContent, d)" class="btn btn-warning btn-sm" title="Ubah">
+                  <i class="fas fa-pen"></i>
+                </button>
+                <button (click)="openDeleteModal(deleteContent, d)" class="btn btn-danger btn-sm ml-1" title="Hapus">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="mt-3 ms-3">
+        <ngb-pagination
+          [(page)]="currentPage"
+          [pageSize]="pageSize"
+          [collectionSize]="donors.length">
+        </ngb-pagination>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<ng-template #addContent let-modal>
+  <div class="modal-header">
+    <h1 class="modal-title fs-5">Tambah Data Donatur</h1>
+    <button type="button" (click)="modal.close()" class="btn-close" aria-label="Close"></button>
+  </div>
+  <div class="modal-body">
+    <form #addForm="ngForm" (ngSubmit)="onAddDonor(addForm)" id="addForm">
+      <div class="form-group">
+        <label class="text-sm">NIK</label>
+        <input type="text" ngModel name="nik" class="form-control form-control-sm" id="focusAdd" autocomplete="off">
+        <div *ngIf="errors?.nik" class="is-invalid text-danger text-sm">{{ errors.nik }}</div>
+      </div>
+      <div class="form-group">
+        <label class="text-sm">Nama <span class="text-danger">*</span></label>
+        <input type="text" ngModel name="name" class="form-control form-control-sm" autocomplete="off" required>
+        <div *ngIf="errors?.name" class="is-invalid text-danger text-sm">{{ errors.name }}</div>
+      </div>
+      <div class="form-group">
+        <label class="text-sm">Jenis Donatur <span class="text-danger">*</span></label>
+        <select ngModel name="type" class="form-control form-control-sm form-select" required>
+          <option value="">-- Pilih Jenis Donatur --</option>
+          <option value="RETAIL">RETAIL</option>
+          <option value="KOMUNITAS">KOMUNITAS</option>
+          <option value="CORPORATE">CORPORATE</option>
+        </select>
+        <div *ngIf="errors?.type" class="is-invalid text-danger text-sm">{{ errors.type }}</div>
+      </div>
+      <div class="form-group">
+        <label class="text-sm">Jenis Kelamin</label>
+        <select ngModel name="gender" class="form-control form-control-sm form-select">
+          <option value="">-- Pilih Jenis Kelamin --</option>
+          <option value="L">Laki-laki</option>
+          <option value="P">Perempuan</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="text-sm">Tanggal Lahir</label>
+        <input type="date" ngModel name="birthDate" class="form-control form-control-sm" autocomplete="off">
+        <div *ngIf="errors?.birthDate" class="is-invalid text-danger text-sm">{{ errors.birthDate }}</div>
+      </div>
+      <div class="form-group">
+        <label class="text-sm">Provinsi</label>
+        <select #provinceSelect ngModel name="provinceId" (click)="onProvinceClicked()" (change)="onProvinceChanged(regencySelect, districtSelect, villageSelect)" class="form-control form-control-sm form-select">
+          <option value="">-- Pilih Provinsi --</option>
+          <option *ngFor="let province of provinces" [value]="province.id">{{ province.name }}</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="text-sm">Kabupaten/Kota</label>
+        <select #regencySelect ngModel name="regencyId" (click)="onRegencyClicked(provinceSelect.value)" (change)="onRegencyChanged(districtSelect, villageSelect)" class="form-control form-control-sm form-select">
+          <option value="">-- Pilih Kab/Kota --</option>
+          <option *ngFor="let regency of regencies" [value]="regency.id">{{ regency.name }}</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="text-sm">Kecamatan</label>
+        <select #districtSelect ngModel name="districtId" (click)="onDistrictClicked(regencySelect.value)" (change)="onDistrictChanged(villageSelect)" class="form-control form-control-sm form-select">
+          <option value="">-- Pilih Kecamatan --</option>
+          <option *ngFor="let district of districts" [value]="district.id">{{ district.name }}</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="text-sm">Desa/Kelurahan</label>
+        <select #villageSelect ngModel name="villageId" (click)="onVillageClicked(districtSelect.value)" class="form-control form-control-sm form-select">
+          <option value="">-- Pilih Desa/Kelurahan --</option>
+          <option *ngFor="let village of villages" [value]="village.id">{{ village.name }}</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="text-sm">Jl/Kp/Blok/Dusun</label>
+        <input type="text" ngModel name="street" class="form-control form-control-sm" autocomplete="off">
+      </div>
+      <div class="form-group">
+        <label class="text-sm">No Telepon</label>
+        <input type="text" appNumber ngModel name="phoneNumber" class="form-control form-control-sm" autocomplete="off">
+        <div *ngIf="errors?.phoneNumber" class="is-invalid text-danger text-sm">{{ errors.phoneNumber }}</div>
+      </div>
+      <div class="form-group">
+        <label class="text-sm">Email</label>
+        <input type="text" ngModel name="email" class="form-control form-control-sm" autocomplete="off">
+        <div *ngIf="errors?.email" class="is-invalid text-danger text-sm">{{ errors.email }}</div>
+      </div>
+      <div class="form-group">
+        <label class="text-sm">Pekerjaan</label>
+        <input type="text" ngModel name="job" class="form-control form-control-sm" autocomplete="off">
+      </div>
+      <div class="form-group">
+        <label class="text-sm">Informasi Lainnya</label>
+        <textarea ngModel name="otherInfo" class="form-control form-control-sm" rows="3" placeholder="Masukkan informasi..."></textarea>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <div class="d-flex justify-content-between align-items-center w-100">
+      <div>
+        <span class="text-danger">*</span>
+        <span class="text-sm"> Wajib diisi</span>
+      </div>
+      <div>
+        <button (click)="modal.close()" type="button" class="btn btn-secondary">Batal</button>
+        <button [disabled]="addForm.invalid" type="submit" form="addForm" class="btn btn-primary ml-2">Simpan</button>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #updateContent let-modal>
+  <div class="modal-header">
+    <h1 class="modal-title fs-5">Ubah Data Donatur</h1>
+    <button type="button" (click)="modal.close()" class="btn-close" aria-label="Close"></button>
+  </div>
+  <div class="modal-body">
+    <form #updateForm="ngForm" (ngSubmit)="onUpdateDonor(updateForm)" id="updateForm">
+      <input type="hidden" name="id" ngModel="{{ donor?.id }}">
+      <div class="form-group">
+        <label class="text-sm">NIK</label>
+        <input type="text" ngModel="{{ donor?.nik }}" name="nik" class="form-control form-control-sm" id="focusUpdate" autocomplete="off">
+        <div *ngIf="errors?.nik" class="is-invalid text-danger text-sm">{{ errors.nik }}</div>
+      </div>
+      <div class="form-group">
+        <label class="text-sm">Nama <span class="text-danger">*</span></label>
+        <input type="text" ngModel="{{ donor?.name }}" name="name" class="form-control form-control-sm" autocomplete="off" required>
+        <div *ngIf="errors?.name" class="is-invalid text-danger text-sm">{{ errors.name }}</div>
+      </div>
+      <div class="form-group">
+        <label class="text-sm">Jenis Donatur <span class="text-danger">*</span></label>
+        <select ngModel="{{ donor?.type }}" name="type" class="form-control form-control-sm form-select" required>
+          <option value="RETAIL">RETAIL</option>
+          <option value="KOMUNITAS">KOMUNITAS</option>
+          <option value="CORPORATE">CORPORATE</option>
+        </select>
+        <div *ngIf="errors?.type" class="is-invalid text-danger text-sm">{{ errors.type }}</div>
+      </div>
+      <div class="form-group">
+        <label class="text-sm">Jenis Kelamin</label>
+        <select ngModel="{{ donor?.gender }}" name="gender" class="form-control form-control-sm form-select">
+          <option value="">-- Pilih Jenis Kelamin --</option>
+          <option value="L">Laki-laki</option>
+          <option value="P">Perempuan</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="text-sm">Tanggal Lahir</label>
+        <input type="date" ngModel="{{ donor?.birthDate }}" name="birthDate" class="form-control form-control-sm" autocomplete="off">
+        <div *ngIf="errors?.birthDate" class="is-invalid text-danger text-sm">{{ errors.birthDate }}</div>
+      </div>
+      <div class="form-group">
+        <label class="text-sm">Provinsi</label>
+        <select #provinceSelect ngModel="{{ donor?.province?.id }}" name="provinceId" (change)="onProvinceChanged(regencySelect, districtSelect, villageSelect)" class="form-control form-control-sm form-select">
+          <option value="">-- Pilih Provinsi --</option>
+          <option *ngFor="let province of provinces" [value]="province.id">{{ province.name }}</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="text-sm">Kabupaten/Kota</label>
+        <select #regencySelect ngModel="{{ donor?.regency?.id }}" name="regencyId" (click)="onRegencyClicked(provinceSelect.value)" (change)="onRegencyChanged(districtSelect, villageSelect)" class="form-control form-control-sm form-select">
+          <option value="">-- Pilih Kab/Kota --</option>
+          <option *ngFor="let regency of regencies" [value]="regency.id">{{ regency.name }}</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="text-sm">Kecamatan</label>
+        <select #districtSelect ngModel="{{ donor?.district?.id }}" name="districtId" (click)="onDistrictClicked(regencySelect.value)" (change)="onDistrictChanged(villageSelect)" class="form-control form-control-sm form-select">
+          <option value="">-- Pilih Kecamatan --</option>
+          <option *ngFor="let district of districts" [value]="district.id">{{ district.name }}</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="text-sm">Desa/Kelurahan</label>
+        <select #villageSelect ngModel="{{ donor?.village?.id }}" name="villageId" (click)="onVillageClicked(districtSelect.value)" class="form-control form-control-sm form-select">
+          <option value="">-- Pilih Desa/Kelurahan --</option>
+          <option *ngFor="let village of villages" [value]="village.id">{{ village.name }}</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="text-sm">Jl/Kp/Blok/Dusun</label>
+        <input type="text" ngModel="{{ donor?.street }}" name="street" class="form-control form-control-sm" autocomplete="off">
+      </div>
+      <div class="form-group">
+        <label class="text-sm">No Telepon</label>
+        <input type="text" appNumber ngModel="{{ donor?.phoneNumber }}" name="phoneNumber" class="form-control form-control-sm" autocomplete="off">
+        <div *ngIf="errors?.phoneNumber" class="is-invalid text-danger text-sm">{{ errors.phoneNumber }}</div>
+      </div>
+      <div class="form-group">
+        <label class="text-sm">Email</label>
+        <input type="text" ngModel="{{ donor?.email }}" name="email" class="form-control form-control-sm" autocomplete="off">
+        <div *ngIf="errors?.email" class="is-invalid text-danger text-sm">{{ errors.email }}</div>
+      </div>
+      <div class="form-group">
+        <label class="text-sm">Pekerjaan</label>
+        <input type="text" ngModel="{{ donor?.job }}" name="job" class="form-control form-control-sm" autocomplete="off">
+      </div>
+      <div class="form-group">
+        <label class="text-sm">Informasi Lainnya</label>
+        <textarea ngModel="{{ donor?.otherInfo }}" name="otherInfo" class="form-control form-control-sm" rows="3" placeholder="Masukkan informasi..."></textarea>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <div class="d-flex justify-content-between align-items-center w-100">
+      <div>
+        <span class="text-danger">*</span>
+        <span class="text-sm"> Wajib diisi</span>
+      </div>
+      <div>
+        <button (click)="modal.close()" type="button" class="btn btn-secondary">Batal</button>
+        <button [disabled]="updateForm.invalid" type="submit" form="updateForm" class="btn btn-primary ml-2">Simpan
+        </button>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #deleteContent let-modal>
+  <div class="modal-header">
+    <h1 class="modal-title fs-5">Konfirmasi Hapus</h1>
+    <button type="button" (click)="modal.close()" class="btn-close" aria-label="Close"></button>
+  </div>
+  <div class="modal-body">
+    Anda yakin ingin menghapus data?
+    <!--    <span class="badge rounded-pill text-bg-success">-->
+    <!--      {{ donor?.name }}-->
+    <!--    </span><br><br>-->
+    <div *ngIf="error?.status === 409" class="badge badge-danger mb-2">
+      Donatur tersebut tidak dapat dihapus karena sudah pernah berdonasi
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button (click)="modal.close()" type="button" class="btn btn-dark">Batal</button>
+    <button (click)="onDeleteDonor(donor!.id)" type="button" class="btn btn-danger" id="delete">
+      Hapus
+    </button>
+  </div>
+</ng-template>
+
+<ng-template #cashDonationContent let-modal>
+  <div class="modal-header">
+    <h1 class="modal-title fs-5">Donasi Cash</h1>
+    <button type="button" (click)="modal.close()" class="btn-close" aria-label="Close"></button>
+  </div>
+  <div class="modal-body">
+    <form #cashDonationForm="ngForm" (ngSubmit)="onAddCashDonation(cashDonationForm)" id="cashDonationForm">
+      <input type="hidden" name="donorId" ngModel="{{ donor?.id }}">
+      <input type="hidden" name="status" ngModel="MENUNGGU">
+      <div class="form-group">
+        <label class="text-sm">Tanggal <span class="text-danger">*</span></label>
+        <input type="date" ngModel name="date" class="form-control form-control-sm" id="focusCash" autocomplete="off" required>
+        <div *ngIf="errors?.date" class="is-invalid text-danger">{{ errors.date }}</div>
+      </div>
+      <div class="form-group">
+        <label class="text-sm">Donatur</label>
+        <input type="text" value="({{ donor?.donorId }}) {{ donor?.name }}" class="form-control form-control-sm" readonly required>
+      </div>
+      <div class="form-group">
+        <label class="text-sm">Akad <span class="text-danger">*</span></label>
+        <select #contractSelect ngModel="{{ contractSelect.value }}" name="contract" class="form-control form-control-sm form-select select2" required>
+          <option value="">-- Pilih Akad --</option>
+          <option value="ZAKAT_INDIVIDU">ZAKAT INDIVIDU</option>
+          <option value="ZAKAT_ENTITAS">ZAKAT ENTITAS</option>
+          <option value="ZAKAT_FITRAH">ZAKAT FITRAH</option>
+          <option value="INSHO">INSHO</option>
+          <option value="BANTUAN_BENCANA">BANTUAN BENCANA</option>
+          <option value="NADZAR">NADZAR</option>
+          <option value="AMBULANCE">AMBULANCE</option>
+          <option value="FIDYAH">FIDYAH</option>
+          <option value="KIFARAT">KIFARAT</option>
+          <option value="AQIQAH">AQIQAH</option>
+          <option value="QURBAN">QURBAN</option>
+          <option value="HIBAH">HIBAH</option>
+          <option value="SANTUNAN_ACARA">SANTUNAN ACARA</option>
+          <option value="EVENT_ACARA">EVENT ACARA</option>
+          <option value="NON_HALAL">NON HALAL</option>
+          <option value="WAKAF_PEDULI">WAKAF PEDULI</option>
+          <option value="WAKAF_QURAN">WAKAF QURAN</option>
+          <option value="WAKAF_BANGUNAN">WAKAF BANGUNAN</option>
+          <option value="LAIN_LAIN">LAIN LAIN</option>
+        </select>
+        <div *ngIf="errors?.contract" class="is-invalid text-danger">{{ errors.contract }}</div>
+      </div>
+      <div class="form-group">
+        <label class="text-sm">No Kuitansi</label>
+        <input type="text" ngModel="{{ receiptNumber }}" name="receiptNumber" class="form-control form-control-sm" readonly required>
+      </div>
+      <div class="form-group">
+        <label class="text-sm">Jumlah Donasi <span class="text-danger">*</span></label>
+        <input type="text" appDotNumber ngModel name="amount" class="form-control form-control-sm" autocomplete="off" required>
+        <div *ngIf="errors?.amount" class="is-invalid text-danger">{{ errors.amount }}</div>
+      </div>
+      <div class="form-group">
+        <label class="text-sm">Foto Kuitansi <span class="text-danger">*</span></label>
+        <input type="file" (change)="onFileSelected($event)" ngModel name="receiptPhoto" class="form-control form-control-sm" autocomplete="off" required>
+        <div *ngIf="errors === 'Required part \'file\' is not present.'" class="is-invalid text-danger">
+          Foto kuitansi wajib diisi
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <div class="d-flex justify-content-between align-items-center w-100">
+      <div>
+        <span class="text-danger">*</span>
+        <span class="text-sm"> Wajib diisi</span>
+      </div>
+      <div>
+        <button (click)="modal.close()" type="button" class="btn btn-secondary">Batal</button>
+        <button [disabled]="cashDonationForm.invalid" type="submit" form="cashDonationForm" class="btn btn-primary ml-2">
+          Simpan
+        </button>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #transferDonationContent let-modal>
+  <div class="modal-header">
+    <h1 class="modal-title fs-5">Donasi Transfer</h1>
+    <button type="button" (click)="modal.close()" class="btn-close" aria-label="Close"></button>
+  </div>
+  <div class="modal-body">
+    <form #transferDonationForm="ngForm" (ngSubmit)="onAddTransferDonation(transferDonationForm)" id="transferDonationForm">
+      <input type="hidden" name="donorId" ngModel="{{ donor?.id }}">
+      <input type="hidden" name="status" ngModel="MENUNGGU">
+      <div class="form-group">
+        <label class="text-sm">Tanggal <span class="text-danger">*</span></label>
+        <input type="date" ngModel name="date" class="form-control form-control-sm" id="focusTransfer" autocomplete="off" required>
+        <div *ngIf="errors?.date" class="is-invalid text-danger">{{ errors.date }}</div>
+      </div>
+      <div class="form-group">
+        <label class="text-sm">Donatur <span class="text-danger">*</span></label>
+        <input type="text" value="({{ donor?.donorId }}) {{ donor?.name }}" class="form-control form-control-sm" readonly required>
+      </div>
+      <div class="form-group">
+        <label class="text-sm">Akad <span class="text-danger">*</span></label>
+        <select #contractSelect ngModel="{{ contractSelect.value }}" name="contract" class="form-control form-control-sm form-select select2" required>
+          <option value="">-- Pilih Akad --</option>
+          <option value="ZAKAT_INDIVIDU">ZAKAT INDIVIDU</option>
+          <option value="ZAKAT_ENTITAS">ZAKAT ENTITAS</option>
+          <option value="ZAKAT_FITRAH">ZAKAT FITRAH</option>
+          <option value="INSHO">INSHO</option>
+          <option value="BANTUAN_BENCANA">BANTUAN BENCANA</option>
+          <option value="NADZAR">NADZAR</option>
+          <option value="AMBULANCE">AMBULANCE</option>
+          <option value="FIDYAH">FIDYAH</option>
+          <option value="KIFARAT">KIFARAT</option>
+          <option value="AQIQAH">AQIQAH</option>
+          <option value="QURBAN">QURBAN</option>
+          <option value="HIBAH">HIBAH</option>
+          <option value="SANTUNAN_ACARA">SANTUNAN ACARA</option>
+          <option value="EVENT_ACARA">EVENT ACARA</option>
+          <option value="NON_HALAL">NON HALAL</option>
+          <option value="WAKAF_PEDULI">WAKAF PEDULI</option>
+          <option value="WAKAF_QURAN">WAKAF QURAN</option>
+          <option value="WAKAF_BANGUNAN">WAKAF BANGUNAN</option>
+          <option value="EVENT_RAMADHAN">EVENT RAMADHAN</option>
+          <option value="PENGADAAN_LAHAN">PENGADAAN LAHAN</option>
+          <option value="LAIN_LAIN">LAIN LAIN</option>
+        </select>
+        <div *ngIf="errors?.contract" class="is-invalid text-danger">{{ errors.contract }}</div>
+      </div>
+      <div class="form-group">
+        <label class="text-sm">Bank Transfer <span class="text-danger">*</span></label>
+        <select #transfersAccountSelect ngModel="{{ transfersAccountSelect.value }}" name="transfersAccount" class="form-control form-control-sm form-select select2" required>
+          <option value="">-- Pilih Bank Transfer --</option>
+          <option value="BSI_7745678925_ISHO">BSI 7745678925 ISHO</option>
+          <option value="BSI_7444401235_ZAKAT">BSI 7444401235 ZAKAT</option>
+          <option value="BSI_7440011238_WAKAF">BSI 7440011238 WAKAF</option>
+          <option value="BSI_7444401235_QURBAN_dan_AQIQAH">BSI 7444401235 QURBAN dan AQIQAH</option>
+          <option value="BCA_1340977722_INSHO">BCA 1340977722 INSHO</option>
+          <option value="BCA_1341277600_WAKAF">BCA 1341277600 WAKAF</option>
+          <option value="BCA_1342599111_QURBAN_dan_AQIQAH">BCA 1342599111 QURBAN dan AQIQAH</option>
+          <option value="BCA_1341624849_ZAKAT">BCA 1341624849 ZAKAT</option>
+          <option value="MANDIRI_1340005660922_INSHO">MANDIRI 1340005660922 INSHO</option>
+          <option value="MANDIRI_SYARIAH_0230117111_INSHO">MANDIRI SYARIAH 0230117111 INSHO</option>
+          <option value="MANDIRI_1340097778889_ZAKAT">MANDIRI 1340097778889 ZAKAT</option>
+          <option value="MANDIRI_1340009777888_WAKAF">MANDIRI 1340009777888 WAKAF</option>
+          <option value="MANDIRI_1340011280194_EVENT">MANDIRI 1340011280194 EVENT</option>
+          <option value="BNI_0208443006_INSHO">BNI 0208443006 INSHO</option>
+          <option value="BNI_0378660864_ZAKAT">BNI 0378660864 ZAKAT</option>
+          <option value="BRI_0107001008139538_INSHO">BRI 0107001008139538 INSHO</option>
+          <option value="REKENING_CSO">REKENING CSO</option>
+          <option value="LINK_AJA">LINK AJA</option>
+          <option value="DANA">DANA</option>
+          <option value="QRIS">QRIS</option>
+          <option value="GOPAY">GOPAY</option>
+          <option value="YOUTAP">YOUTAP</option>
+          <option value="LAINNYA">LAINNYA</option>
+        </select>
+        <div *ngIf="errors?.transfersAccount" class="is-invalid text-danger">{{ errors.transfersAccount }}</div>
+      </div>
+      <div class="form-group">
+        <label class="text-sm">Jumlah Donasi <span class="text-danger">*</span></label>
+        <input type="text" appDotNumber ngModel name="amount" class="form-control form-control-sm" autocomplete="off" required>
+        <div *ngIf="errors?.amount" class="is-invalid text-danger">{{ errors.amount}}</div>
+      </div>
+      <div class="form-group">
+        <label class="text-sm">Foto Slip Bank <span class="text-danger">*</span></label>
+        <input type="file" ngModel name="receiptPhoto" (change)="onFileSelected($event)" class="form-control form-control-sm" autocomplete="off" required>
+        <div *ngIf="errors === 'Required part \'file\' is not present.'" class="is-invalid text-danger">
+          Foto kuitansi wajib diisi
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <div class="d-flex justify-content-between align-items-center w-100">
+      <div>
+        <span class="text-danger">*</span>
+        <span class="text-sm"> Wajib diisi</span>
+      </div>
+      <div>
+        <button (click)="modal.close()" type="button" class="btn btn-secondary">Batal</button>
+        <button [disabled]="transferDonationForm.invalid" type="submit" form="transferDonationForm" class="btn btn-primary ml-2">
+          Simpan
+        </button>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #visitContent let-modal>
+  <div class="modal-header">
+    <h1 class="modal-title fs-5">Kunjungan Tamu</h1>
+    <button type="button" (click)="modal.close()" class="btn-close" aria-label="Close"></button>
+  </div>
+  <div class="modal-body">
+    <form #visitForm="ngForm" (ngSubmit)="onAddVisit(visitForm)" id="visitForm">
+      <input type="hidden" name="donorId" ngModel="{{ donor?.id }}">
+      <div class="form-group">
+        <label class="text-sm">Tanggal <span class="text-danger">*</span></label>
+        <input type="date" ngModel name="date" class="form-control form-control-sm" id="focusVisit" autocomplete="off" required>
+        <div *ngIf="errors?.date" class="is-invalid text-danger">{{ errors.date }}</div>
+      </div>
+      <div class="form-group">
+        <label class="text-sm">Donatur <span class="text-danger">*</span></label>
+        <input type="text" value="({{ donor?.donorId }}) {{ donor?.name }}" class="form-control form-control-sm" readonly required>
+      </div>
+      <div class="form-group">
+        <label class="text-sm">Keperluan <span class="text-danger">*</span></label>
+        <select #purpose ngModel name="purpose" class="form-control form-control-sm form-select" required>
+          <option value="">-- Pilih Keperluan --</option>
+          <option value="TANYA_TANYA">TANYA TANYA</option>
+          <option value="BOOKING_ACARA">BOOKING ACARA</option>
+          <option value="LAINNYA">LAINNYA</option>
+        </select>
+        <div *ngIf="errors?.purpose && purpose.value === ''" class="is-invalid text-danger">{{ errors.purpose }}</div>
+      </div>
+      <div class="form-group" *ngIf="purpose.value === 'LAINNYA'">
+        <label class="text-sm">Keperluan Lainnya <span class="text-danger">*</span></label>
+        <input type="text" ngModel name="otherPurpose" class="form-control form-control-sm" autocomplete="off" required>
+        <div *ngIf="errors?.purpose" class="is-invalid text-danger">{{ errors.purpose }}</div>
+      </div>
+      <div class="form-group">
+        <label class="text-sm">Foto <span class="text-danger">*</span></label>
+        <input type="file" (change)="onFileSelected($event)" ngModel name="photo" class="form-control form-control-sm" autocomplete="off" required>
+        <div *ngIf="errors === 'Required part \'file\' is not present.'" class="is-invalid text-danger">
+          Foto wajib diisi
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <div class="d-flex justify-content-between align-items-center w-100">
+      <div>
+        <span class="text-danger">*</span>
+        <span class="text-sm"> Wajib diisi</span>
+      </div>
+      <div>
+        <button (click)="modal.close()" type="button" class="btn btn-secondary">Batal</button>
+        <button [disabled]="visitForm.invalid" type="submit" form="visitForm" class="btn btn-primary ml-2">Simpan
+        </button>
+      </div>
+    </div>
+  </div>
+</ng-template>

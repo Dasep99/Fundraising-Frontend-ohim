@@ -1,0 +1,28 @@
+package itc.fundraising.enums;
+
+public enum CashlessItem {
+
+    BERAS_KG,
+    MIE_PCS,
+    TERIGU_KG,
+    MINYAK_GORENG_LITER,
+    GULA_KG,
+    TEH_ISI_25_ATAU_30,
+    TEH_ISI_50,
+    TEH_ISI_100,
+    SUSU_KECIL,
+    SUSU_BESAR,
+    SARDEN_KECIL,
+    SARDEN_BESAR,
+    DONASI_SELAIN_13,
+    PERALATAN,
+    BARANG_BERHARGA,
+    KAMBING_AQIQAH,
+    KAMBING_QURBAN,
+    SAPI_QURBAN,
+    KENDARAAN_RODA_2,
+    KENDARAAN_RODA_4,
+    TANAH,
+    BANGUNAN
+
+}

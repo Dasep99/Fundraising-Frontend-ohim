@@ -1,0 +1,64 @@
+.min-w-15 {
+  min-width: 15rem;
+}
+
+.min-w-14 {
+  min-width: 14rem;
+}
+
+.min-w-13 {
+  min-width: 13rem;
+}
+
+.min-w-12 {
+  min-width: 12rem;
+}
+
+.min-w-11 {
+  min-width: 11rem;
+}
+
+.min-w-10 {
+  min-width: 10rem;
+}
+
+.min-w-9 {
+  min-width: 9rem;
+}
+
+.min-w-8 {
+  min-width: 8rem;
+}
+
+.min-w-7 {
+  min-width: 7rem;
+}
+
+.min-w-6 {
+  min-width: 6rem;
+}
+
+.min-w-5 {
+  min-width: 5rem;
+}
+
+.min-w-4 {
+  min-width: 4rem;
+}
+
+.min-w-3 {
+  min-width: 3rem;
+}
+
+.select2-selection__rendered, .select2-results__options {
+  font-size: .875rem !important;
+}
+
+.modal-dialog {
+  overflow-y: initial !important;
+}
+
+.modal-body {
+  max-height: 70vh !important;
+  overflow-y: auto !important;
+}

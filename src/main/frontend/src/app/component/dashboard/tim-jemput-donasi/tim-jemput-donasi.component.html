@@ -1,0 +1,165 @@
+
+<div class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <h1 class="m-0">Dashboard</h1>
+      </div>
+      <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+          <li class="breadcrumb-item"><a >Home</a></li>
+          <li class="breadcrumb-item active">Dashboard</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<div class="container-fluid">
+
+  <div class="row">
+
+
+    <div class="col-lg-12 col-6">
+
+      <div class="small-box bg-lightblue">
+        <div class="inner">
+          <h3>{{ donors.length }}</h3>
+          <p>Data Donatur</p>
+        </div>
+        <div class="icon">
+          <i class="nav-icon fas fa-solid fa-users"></i>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-4 col-6">
+
+      <div class="small-box bg-success">
+        <div class="inner">
+          <h3>Rp {{ totalCashAmountToday | number: '1.0-0': 'id'}}</h3>
+          <p>Donasi Cash Hari Ini</p>
+        </div>
+        <div class="icon">
+          <i class="nav-icon fas fa-solid fa-money-bill"></i>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="col-lg-4 col-6">
+
+      <div class="small-box bg-success">
+        <div class="inner">
+          <h3>Rp {{ totalCashAmountThisMonth | number: '1.0-0': 'id'}}</h3>
+          <p>Donasi Cash Bulan Ini</p>
+        </div>
+        <div class="icon">
+          <i class="nav-icon fas fa-solid fa-money-bill"></i>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-4 col-6">
+
+      <div class="small-box bg-success">
+        <div class="inner">
+          <h3>Rp {{ totalCashAmountLastMonth | number: '1.0-0': 'id'}}</h3>
+          <p>Donasi Cash Bulan Lalu</p>
+        </div>
+        <div class="icon">
+          <i class="nav-icon fas fa-solid fa-money-bill"></i>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="col-lg-4 col-6">
+
+      <div class="small-box bg-secondary">
+        <div class="inner">
+          <h3 style="color: white">Rp {{ totalDailyvalidationToday | number: '1.0-0': 'id'}}</h3>
+          <p>Validasi Harian Hari Ini</p>
+        </div>
+        <div class="icon">
+          <i class="nav-icon fas fa-solid fa-handshake"></i>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-4 col-6">
+
+      <div class="small-box bg-secondary">
+        <div class="inner">
+          <h3 style="color: white">Rp {{ totalDailyvalidationThisMonth | number: '1.0-0': 'id'}}</h3>
+          <p>Validasi Harian Bulan Ini</p>
+        </div>
+        <div class="icon">
+          <i class="nav-icon fas fa-solid fa-handshake"></i>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-4 col-6">
+
+      <div class="small-box bg-secondary">
+        <div class="inner">
+          <h3 style="color: white">Rp {{ totalDailyvalidationLastMonth | number: '1.0-0': 'id'}}</h3>
+          <p>Validasi Harian Bulan Lalu</p>
+        </div>
+        <div class="icon">
+          <i class="nav-icon fas fa-solid fa-handshake"></i>
+        </div>
+      </div>
+    </div>
+
+
+
+
+    <div class="col-lg-4 col-6">
+
+      <div class="small-box bg-warning">
+        <div class="inner">
+          <h3 style="color: white">Rp {{ totalCashDepositToday | number: '1.0-0': 'id'}}</h3>
+          <p style="color: white">Pengeluaran Setor Tunai Hari Ini</p>
+        </div>
+        <div class="icon">
+          <i class="nav-icon fas fa-solid fa-pen-square"></i>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-4 col-6">
+
+      <div class="small-box bg-warning">
+        <div class="inner">
+          <h3 style="color: white">Rp {{ totalCashDepositThisMonth | number: '1.0-0': 'id'}}</h3>
+          <p style="color: white">Pengeluaran Setor Tunai Bulan Ini</p>
+        </div>
+        <div class="icon">
+          <i class="nav-icon fas fa-solid fa-pen-square"></i>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-4 col-6">
+
+      <div class="small-box bg-warning">
+        <div class="inner">
+          <h3 style="color: white">Rp {{ totalCashDepositLastMonth | number: '1.0-0': 'id'}}</h3>
+          <p style="color: white">Pengeluaran Setor Tunai Bulan Lalu</p>
+        </div>
+        <div class="icon">
+          <i class="nav-icon fas fa-solid fa-pen-square"></i>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+
+
+
+</div>

@@ -1,0 +1,75 @@
+### Login
+POST http://localhost:8080/login
+Content-Type: application/json
+
+{
+  "username": "admin",
+  "password": "admin"
+}
+
+
+### List User
+GET http://localhost:8080/api/users
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTY4NjUzNTEwMiwiZXhwIjoxNjg2NTM2NTQyfQ.9yPyVoWiYlbY9q1T7QLpYN8_FD0xD1tdnnWSZHPneSiHN-OdQCaKPy7KwnxDP2Cor9zSJ1YmPQRIynouDMDABQ
+
+
+### Get User
+GET http://localhost:8080/api/users/209e0888-c445-44fc-9662-b85bb89d2e6a
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTY4NjIzNzkwOSwiZXhwIjoxNjg2MjM5MzQ5fQ.2K6Ng98eqkgQj2doIa-oKr7FLOm7riEwapP-RpPUbpv2_t3ufa_MpqM-1T-I-1_4VEpNQHUvIy8kFqvwQCtfYg
+
+
+### Create User
+POST http://localhost:8080/api/users
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTY4NjIzNzkwOSwiZXhwIjoxNjg2MjM5MzQ5fQ.2K6Ng98eqkgQj2doIa-oKr7FLOm7riEwapP-RpPUbpv2_t3ufa_MpqM-1T-I-1_4VEpNQHUvIy8kFqvwQCtfYg
+
+{
+  "username": "andi",
+  "name": "Andi Suhandi",
+  "password": "123456",
+  "role": "FRONT_OFFICE",
+  "workArea": "G1"
+}
+
+
+### Update User
+PUT http://localhost:8080/api/users
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTY4NjIzNzkwOSwiZXhwIjoxNjg2MjM5MzQ5fQ.2K6Ng98eqkgQj2doIa-oKr7FLOm7riEwapP-RpPUbpv2_t3ufa_MpqM-1T-I-1_4VEpNQHUvIy8kFqvwQCtfYg
+
+{
+  "id": "40c8f628-a4fa-411a-b726-9473786adbec",
+  "username": "andi",
+  "name": "Andi Mawardi",
+  "password": "123456",
+  "role": "FRONT_OFFICE",
+  "workArea": "G12"
+}
+
+
+### Delete User
+DELETE http://localhost:8080/api/users/9fe86cdd-f59d-4a50-9ca4-c3ace2bae848
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTY4NjIzNzkwOSwiZXhwIjoxNjg2MjM5MzQ5fQ.2K6Ng98eqkgQj2doIa-oKr7FLOm7riEwapP-RpPUbpv2_t3ufa_MpqM-1T-I-1_4VEpNQHUvIy8kFqvwQCtfYg
+
+
+### List Box Donations
+GET http://localhost:8080/api/boxDonations
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTY4NjI3NzgxOCwiZXhwIjoxNjg2Mjc5MjU4fQ.EWD-iZ64IrfM3ISz2EZvCVjhHzYRbp7uKiIvh6Gt-kcyMy-0Vi0K7K0zxrAWdGIRSI9KFbToJQmu-ryet0JaRg
+
+### Create Box Donation
+POST http://localhost:8080/api/boxDonations
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTY4NjI3NzgxOCwiZXhwIjoxNjg2Mjc5MjU4fQ.EWD-iZ64IrfM3ISz2EZvCVjhHzYRbp7uKiIvh6Gt-kcyMy-0Vi0K7K0zxrAWdGIRSI9KFbToJQmu-ryet0JaRg
+
+{
+  "date": "2023-06-09",
+  "receiptNumber": "laskdas",
+  "amount": 1000000,
+  "receiptPhoto": "akljdsal.jpg",
+  "userId": "209e0888-c445-44fc-9662-b85bb89d2e6a"
+}
+
+
+### List Donors
+GET http://localhost:8080/api/donors
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTY4NjI5NTA5MiwiZXhwIjoxNjg2Mjk2NTMyfQ.zMIfFeNE4KCfxX09kYWD4J2Iljbi_5P4wLJtCF2yeeR2ebpFr9EmuzKrOY4wWeGvoZzRFFf8SsWwQdx0oS8KSQ

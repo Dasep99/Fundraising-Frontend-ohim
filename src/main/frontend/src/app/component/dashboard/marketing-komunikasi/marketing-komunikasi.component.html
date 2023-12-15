@@ -1,0 +1,168 @@
+
+<div class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <h1 class="m-0">Dashboard</h1>
+      </div>
+      <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+          <li class="breadcrumb-item"><a >Home</a></li>
+          <li class="breadcrumb-item active">Dashboard</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<div class="container-fluid">
+
+  <div class="row">
+    <div class="col-lg-12 col-6">
+
+      <div class="small-box bg-info">
+        <div class="inner">
+          <h3>{{ donors.length }}</h3>
+          <p>Data Donatur</p>
+        </div>
+        <div class="icon">
+          <i class="nav-icon fas fa-solid fa-users"></i>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="col-lg-4 col-6">
+
+      <div class="small-box bg-success">
+        <div class="inner">
+          <h3>Rp {{ totalTransferToday | number: '1.0-0': 'id'}}</h3>
+          <p>Donasi Transfer Hari Ini</p>
+        </div>
+        <div class="icon">
+          <i class="nav-icon fas fa-solid fa-money-bill"></i>
+        </div>
+
+      </div>
+    </div>
+
+
+    <div class="col-lg-4 col-6">
+
+      <div class="small-box bg-primary">
+        <div class="inner">
+          <h3>Rp {{ totalTransferThisMonth | number: '1.0-0': 'id'}}</h3>
+          <p>Donasi Transfer Bulan Ini</p>
+        </div>
+        <div class="icon">
+          <i class="nav-icon fas fa-solid fa-money-check"></i>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="col-lg-4 col-6">
+
+      <div class="small-box bg-secondary">
+        <div class="inner">
+          <h3>Rp {{ totalTransferLastMonth | number: '1.0-0': 'id'}}</h3>
+          <p>Donasi Transfer Bulan Lalu</p>
+        </div>
+        <div class="icon">
+          <i class="nav-icon fas fa-solid fa-money-check-alt"></i>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="col-lg-4 col-6">
+
+      <div class="small-box bg-primary">
+        <div class="inner">
+          <h3>Rp {{ totalCashDepositToday | number: '1.0-0': 'id'}}</h3>
+          <p>Pengeluaran Setor Tunai Hari Ini</p>
+        </div>
+        <div class="icon">
+          <i class="nav-icon fas fa-solid fa-money-check-alt"></i>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="col-lg-4 col-6">
+
+      <div class="small-box bg-primary">
+        <div class="inner">
+          <h3>Rp {{ totalCashDepositThisMonth | number: '1.0-0': 'id'}}</h3>
+          <p>Pengeluaran Setor Tunai Bulan Ini</p>
+        </div>
+        <div class="icon">
+          <i class="nav-icon fas fa-solid fa-money-check-alt"></i>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="col-lg-4 col-6">
+
+      <div class="small-box bg-primary">
+        <div class="inner">
+          <h3>Rp {{ totalCashDepositLastMonth | number: '1.0-0': 'id'}}</h3>
+          <p>Pengeluaran Setor Tunai Bulan Lalu</p>
+        </div>
+        <div class="icon">
+          <i class="nav-icon fas fa-solid fa-money-check-alt"></i>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="col-lg-4 col-6">
+
+      <div class="small-box bg-gradient-indigo">
+        <div class="inner">
+          <h3>Rp {{ totalValidationToday | number: '1.0-0': 'id'}}</h3>
+          <p>Validasi Harian Hari Ini</p>
+        </div>
+        <div class="icon">
+          <i class="nav-icon fas fa-solid fa-money-check"></i>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="col-lg-4 col-6">
+
+      <div class="small-box bg-gradient-indigo">
+        <div class="inner">
+          <h3>Rp {{ totalDailyvalidationThisMonth | number: '1.0-0': 'id'}}</h3>
+          <p>Validasi Harian Bulan Ini</p>
+        </div>
+        <div class="icon">
+          <i class="nav-icon fas fa-solid fa-money-check"></i>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="col-lg-4 col-6">
+
+      <div class="small-box bg-gradient-indigo">
+        <div class="inner">
+          <h3>Rp {{ totalDailyvalidationLastMonth | number: '1.0-0': 'id'}}</h3>
+          <p>Validasi Harian Bulan Lalu</p>
+        </div>
+        <div class="icon">
+          <i class="nav-icon fas fa-solid fa-money-check"></i>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+
+
+</div>

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login Form</title>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: #6A0000;
+    }
+
+    .card-header {
+      padding: .75rem 1.25rem;
+      margin-bottom: 0;
+      background-color: rgba(255, 255, 255, 0.8);
+      border-bottom: 1px solid rgba(0, 0, 0, .125);
+    }
+
+    .login-box {
+      max-width: 400px;
+      margin: auto;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="row">
+    <div class="login-box">
+      <div class="card card-outline card">
+        <div class="card-header text-center">
+          <img width="120px" src="../../../assets/img/logo.jpg" class="h1" alt="">
+        </div>
+        <div class="card-body">
+          <p class="login-box-msg">Silahkan Login</p>
+          <form (ngSubmit)="login(loginForm)" #loginForm="ngForm">
+            <div class="input-group mb-3">
+              <input type="text" id="username" name="username" [(ngModel)]="loginForm.value.username" class="form-control" placeholder="Username" autofocus>
+              <div class="input-group-append">
+                <div class="input-group-text">
+                  <span class="fas fa-user"></span>
+                </div>
+              </div>
+            </div>
+            <div class="input-group mb-3">
+              <input type="password" id="password" name="password" [(ngModel)]="loginForm.value.password" class="form-control" placeholder="Password">
+              <div class="input-group-append">
+                <div class="input-group-text">
+                  <span class="fas fa-lock"></span>
+                </div>
+              </div>
+            </div>
+
+            <div class="social-auth-links text-center mt-2 mb-3">
+              <button [disabled]="loginForm.invalid" type="submit" class="btn btn-block btn-warning">
+                <b> Login</b>
+              </button>
+            </div>
+          </form>
+
+          <div *ngIf="!isAuthenticated" class="text-danger mb-2">
+            {{ errors }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.19.1.final using JasperReports Library version 6.19.1-867c00bf88cd4d784d404379d6c05e1b419e8a4c  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="cash-donation-receipt" pageWidth="609" pageHeight="212" orientation="Landscape" columnWidth="553" leftMargin="28" rightMargin="28" topMargin="28" bottomMargin="28" uuid="275524d3-b3f1-49e0-bca1-1b52d9ed97f6">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<parameter name="logo" class="java.io.InputStream"/>
+	<parameter name="jjg" class="java.io.InputStream"/>
+	<parameter name="jjg2" class="java.io.InputStream"/>
+	<parameter name="qr" class="java.io.InputStream"/>
+	<parameter name="receiptNumber" class="java.lang.String"/>
+	<parameter name="donorName" class="java.lang.String"/>
+	<parameter name="amountShort" class="java.lang.String"/>
+	<parameter name="date" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<detail>
+		<band height="156" splitType="Stretch">
+			<image hAlign="Center" vAlign="Middle">
+				<reportElement x="269" y="86" width="151" height="14" uuid="f1132fc8-cf9c-47f1-9f1d-7900f0abfd8c">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<imageExpression><![CDATA[$P{jjg2}]]></imageExpression>
+			</image>
+			<image hAlign="Center" vAlign="Middle">
+				<reportElement x="0" y="0" width="210" height="30" uuid="ac185f8b-5b2e-4d5b-915f-2f8c0596f5ec"/>
+				<imageExpression><![CDATA[$P{logo}]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement x="220" y="0" width="330" height="14" uuid="7a6f7801-bd2a-49d3-8b68-b5c551f3e57a"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["No. : " + $P{receiptNumber}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="30" width="210" height="25" uuid="fec02c83-8385-4085-918d-597ab9deeb1f"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[Menyalurkan ZISWAF di Graha Yatim & Dhu'afa kini lebih mudah
+melalui aplikasi e-wallet pilihan Anda (LinkAja, Ovo, Gopay, Dana, dll.)
+dengan SCAN QR CODE berikut :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="104" width="210" height="14" uuid="971c16c5-2e95-454e-b8b6-56b76abb4250"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[Kantor Cabang Asrama Graha Yatim & Dhu'afa (GRAY)
+Yayasan Harapan Robbani]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="121" width="70" height="8" uuid="fb8fe9cc-78f5-48a0-8c14-548b24def0ba"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[1 Cirebon Jawa Barat]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="129" width="70" height="8" uuid="9c5c6f0e-1c0e-41f9-b35a-5349b6b50750">
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[2 Bekasi Jawa Barat]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="70" y="121" width="70" height="8" uuid="42373417-526c-4528-8c1c-f5dbf3ee1788">
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[3 DKI Jakarta]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="70" y="129" width="70" height="8" uuid="ab08a4b0-c887-43eb-a3b1-b8ccc7039e2a">
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[4 Kuningan Jawa Barat]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="140" y="121" width="70" height="8" uuid="4d7084c2-48b5-42b9-9940-18f2796305b3">
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[5 Surabaya Jawa Timur]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="140" y="129" width="70" height="8" uuid="98024401-7301-4841-b800-11b85d10535f">
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[6 Kalimantan Selatan]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="140" width="90" height="8" uuid="6443acdc-2e75-4bba-9737-284df4e96934"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="5" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Facebook :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="90" y="140" width="70" height="8" uuid="34208547-a196-4566-a112-edbc46fbd196"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="5" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Instagram :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="160" y="140" width="50" height="8" uuid="9d551aae-f0df-429c-bb66-800baf4ba33a"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="5" isBold="true"/>
+				</textElement>
+				<text><![CDATA[WhatsApp :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="148" width="90" height="8" uuid="110b60ca-20e1-4eac-8cfe-3dcc3a839121"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="5" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Graha Yatim & Dhu'afa (GRAY)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="90" y="148" width="70" height="8" uuid="3b30d98d-477f-4ae5-a06b-2aef5ddef3ec"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[Graha_Yatim_Dhuafa]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="160" y="148" width="50" height="8" uuid="dec338a1-da60-4424-8f75-756ba17bfc2d"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[081 223 000 253]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="220" y="14" width="330" height="14" uuid="20b65224-4101-4ff3-92f7-367245451184"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Telah Terima Dari      : " + $P{donorName}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="220" y="28" width="80" height="14" uuid="8d3213b5-fd44-4a31-826c-67c5dec59453"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Uang Sejumlah"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="420" y="86" width="130" height="14" uuid="79c8c3fc-9d84-43de-beb5-e274f160cd42"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{date}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="232" y="104" width="70" height="23" uuid="24b5684b-c088-4f5f-99df-2a5354af80a6">
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[Tidak menerima donasi dari hasil korupsi atau tindak kejahatan]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="232" y="127" width="70" height="23" uuid="673a34e1-a82c-4965-81bf-70b49f0be1ef">
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				</reportElement>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[Tidak menerima donasi untuk tindakan pencucian uang (money laundry)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="310" y="140" width="110" height="16" uuid="c1c2973e-a2fb-40b0-9ee8-157da06c06df">
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[Donatur (yang menyerahkan)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="440" y="140" width="110" height="16" uuid="ed538704-390e-40fc-afa3-14145ced0a01">
+					<property name="com.jaspersoft.studio.unit.height" value="mm"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="7"/>
+				</textElement>
+				<text><![CDATA[Petugas (yang menerima)]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement x="220" y="111" width="8" height="8" uuid="18d41d86-fa77-47c1-a27a-a1cce11c1df1"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</rectangle>
+			<rectangle>
+				<reportElement x="220" y="134" width="8" height="8" uuid="441304cd-f761-4fad-bf15-c6e7e9075d42"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="220" y="42" width="330" height="44" uuid="016185b0-8b86-4a60-8a96-ae2c0a2b0a93"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+					<paragraph lineSpacing="1_1_2"/>
+				</textElement>
+				<text><![CDATA[Untuk Pembayaran    : ...............................................................................................................
+............................................................................................................................................................................................................................................................................................................................................................................................................................................................]]></text>
+			</staticText>
+			<line>
+				<reportElement x="310" y="137" width="110" height="1" uuid="97ad386b-6b10-458c-9ac6-b778452dd00b">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="440" y="137" width="110" height="1" uuid="bddfeadc-3728-4acc-ae27-352ba7e0ccd9">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</line>
+			<textField>
+				<reportElement x="269" y="86" width="151" height="14" uuid="a425a0fb-df6f-498d-a4fa-d7c870c22334"/>
+				<box leftPadding="8" rightPadding="8">
+					<pen lineWidth="0.0"/>
+					<topPen lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{amountShort}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="220" y="86" width="49" height="14" uuid="2d33da99-491d-4f29-aab2-f8e4fc7160c3">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[Terbilang Rp.]]></text>
+			</staticText>
+			<image hAlign="Center" vAlign="Middle">
+				<reportElement x="300" y="28" width="250" height="14" uuid="873e6ac9-8bd2-4e05-a581-741bcb43eddf">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<imageExpression><![CDATA[$P{jjg}]]></imageExpression>
+			</image>
+			<rectangle radius="3">
+				<reportElement x="86" y="55" width="38" height="38" uuid="f614ab16-254d-415a-9cd4-4cab5189a583">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</rectangle>
+			<image hAlign="Center" vAlign="Middle">
+				<reportElement x="88" y="57" width="34" height="34" uuid="6ab965ba-63cb-4494-84e3-a3552abacf54">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<imageExpression><![CDATA[$P{qr}]]></imageExpression>
+			</image>
+			<rectangle radius="2">
+				<reportElement x="73" y="96" width="65" height="8" uuid="2b18e367-f079-4729-9ea7-c071947f880b">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="73" y="96" width="65" height="8" uuid="07d53d84-1102-48b7-9632-79fe87ebb6fb">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[ISHO HARAPAN ROBBANI]]></text>
+			</staticText>
+		</band>
+	</detail>
+</jasperReport>

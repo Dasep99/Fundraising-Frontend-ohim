@@ -1,0 +1,270 @@
+<div class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <h1 class="m-0">Data Pundi</h1>
+      </div>
+      <div class="alert alert-success" *ngIf="alertMessage">
+        {{ alertMessage }}
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header">
+        <div class="d-flex justify-content-between align-items-center">
+          <button *ngIf="userRole === 'PETUGAS_PUNDI'" (click)="openAddModal(addContent)" class="btn btn-primary btn-sm m-1">
+            <i class="fas fa-plus"></i>
+            Tambah Data
+          </button>
+          <form (ngSubmit)="onSearch(search.value)">
+            <div class="input-group">
+              <input #search type="text" class="form-control form-control-sm" placeholder="Search">
+              <div class="input-group-append">
+                <button type="submit" class="btn btn-primary btn-sm">
+                  <span class="fas fa-search"></span>
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div class="card-body table-responsive p-0">
+        <table class="table table-hover">
+          <thead>
+          <tr>
+            <th>No</th>
+            <th>Ket. Pundi</th>
+            <th>Nama Outlet</th>
+            <th>Kode</th>
+            <th>Alamat</th>
+            <th>Nama Pemilik</th>
+            <th>No Telepon</th>
+            <th>Tanggal Penitipan</th>
+            <th>Foto Outlet</th>
+            <th>Lokasi</th>
+            <th>Ket. Lainnya</th>
+            <th *ngIf="userRole === 'PETUGAS_PUNDI' || userRole === 'ADMIN_PENERIMAAN'">Manajemen</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let d of charityBoxes | slice: (currentPage - 1) * pageSize : currentPage * pageSize; let i = index">
+            <td>{{ (currentPage - 1) * pageSize + i + 1 }}</td>
+            <td>{{ d.charityBoxInfo }}</td>
+            <td>{{ d.outletName }}</td>
+            <td>{{ d.code }}</td>
+            <td>{{ d.address }}</td>
+            <td>{{ d.ownerName }}</td>
+            <td>{{ d.phoneNumber }}</td>
+            <td>{{ d.depositDate | date: 'dd/MM/yyyy' }}</td>
+            <td>
+              <button (click)="openViewImage(openImage, d)" class="btn btn-info btn-sm">
+                <i class="nav-icon fas fa-copy"></i>
+                Lihat Foto
+              </button>
+            </td>
+            <td>
+              <a href="{{ d.mapsUrl }}" target="_blank" class="btn btn-primary btn-sm">
+                <i class="nav-icon fas fa-map"></i>
+                Lihat Maps
+              </a>
+              <!--              <a href="{{ d.mapsUrl }}">{{ d.coordinates | slice:0:10 }}</a></td>-->
+            <td>{{ d.otherInfo }}</td>
+            <td>
+              <button (click)="openUpdateModal(updateContent, d)" class="btn btn-warning btn-sm" title="Ubah"
+                      *ngIf="userRole === 'PETUGAS_PUNDI' || userRole === 'ADMIN_PENERIMAAN'">
+                <i class="fas fa-pen"></i>
+              </button>
+              <button (click)="openDeleteModal(deleteContent, d)" class="btn btn-danger btn-sm ml-1" title="Hapus"
+                      *ngIf="userRole === 'PETUGAS_PUNDI'">
+                <i class="fas fa-trash"></i>
+              </button>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="mt-3 ms-3">
+        <ngb-pagination
+          [(page)]="currentPage"
+          [pageSize]="pageSize"
+          [collectionSize]="charityBoxes.length">
+        </ngb-pagination>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<ng-template #addContent let-modal>
+  <div class="modal-header">
+    <h1 class="modal-title fs-5">Tambah Data Pundi</h1>
+    <button type="button" (click)="modal.close()" class="btn-close" aria-label="Close"></button>
+  </div>
+  <form #addForm="ngForm" (ngSubmit)="onAddCharityBox(addForm)">
+    <div class="modal-body">
+      <div class="form-group">
+        <label>Keterangan Pundi</label>
+        <select ngModel name="charityBoxInfo" class="custom-select" id="addCharityBoxInfo" required>
+          <option value="">-- Pilih Ket. Pundi --</option>
+          <option value="BARU">BARU</option>
+          <option value="RELOKASI">RELOKASI</option>
+        </select>
+        <div *ngIf="errors?.charityBoxInfo" class="is-invalid text-danger">{{ errors.charityBoxInfo }}</div>
+      </div>
+      <div class="form-group">
+        <label>Nama Outlet</label>
+        <input type="text" ngModel name="outletName" class="form-control" autocomplete="off" required>
+        <div *ngIf="errors?.outletName" class="is-invalid text-danger">{{ errors.outletName }}</div>
+      </div>
+      <!--      <div class="form-group">-->
+      <!--        <label>Kode</label>-->
+      <!--        <input type="text" ngModel name="code" class="form-control" autocomplete="off" required>-->
+      <!--      </div>-->
+      <div class="form-group">
+        <label>Alamat</label>
+        <input type="text" ngModel name="address" class="form-control" autocomplete="off" required>
+        <div *ngIf="errors?.address" class="is-invalid text-danger">{{ errors.address }}</div>
+      </div>
+      <div class="form-group">
+        <label>Nama Pemilik</label>
+        <input type="text" ngModel name="ownerName" class="form-control" autocomplete="off" required>
+        <div *ngIf="errors?.ownerName" class="is-invalid text-danger">{{ errors.ownerName }}</div>
+      </div>
+      <div class="form-group">
+        <label>No Telepon</label>
+        <input type="text" appNumber ngModel name="phoneNumber" class="form-control" autocomplete="off" required>
+        <div *ngIf="errors?.phoneNumber" class="is-invalid text-danger">{{ errors.phoneNumber }}</div>
+      </div>
+      <div class="form-group">
+        <label>Tanggal Penitipan</label>
+        <input type="date" ngModel name="depositDate" class="form-control" autocomplete="off" required>
+        <div *ngIf="errors?.depositDate" class="is-invalid text-danger">{{ errors.depositDate }}</div>
+      </div>
+      <div class="form-group">
+        <label>Foto Outlet</label>
+        <input type="file" ngModel name="outletPhoto" (change)="onFileSelected($event)" class="form-control" autocomplete="off" required>
+        <div *ngIf="errors === 'Required part \'file\' is not present.'" class="is-invalid text-danger">Foto wajib
+          diisi
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Koordinat</label>
+        <input #coordinates type="text" [ngModel]="coordinatesText" name="coordinates" class="form-control" id="addCoordinates" autocomplete="off" readonly required>
+        <div *ngIf="errors?.coordinates" class="is-invalid text-danger">{{ errors.coordinates }}</div>
+      </div>
+      <div id="addMap" style="height: 400px"></div>
+      <div class="form-group">
+        <label>Keterangan Lainnya</label>
+        <textarea ngModel name="otherInfo" class="form-control" rows="3" placeholder="Masukkan keterangan..."></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button (click)="modal.close()" type="button" class="btn btn-secondary">Batal</button>
+      <button [disabled]="addForm.invalid || coordinates.value === ''" type="submit" class="btn btn-primary">Simpan
+      </button>
+    </div>
+  </form>
+</ng-template>
+
+<ng-template #updateContent let-modal>
+  <div class="modal-header">
+    <h1 class="modal-title fs-5">Ubah Data Pundi</h1>
+    <button type="button" (click)="modal.close()" class="btn-close" aria-label="Close"></button>
+  </div>
+  <form #updateForm="ngForm" (ngSubmit)="onUpdateCharityBox(updateForm)">
+    <div class="modal-body">
+      <input type="hidden" name="id" ngModel="{{ charityBox?.id }}">
+      <div class="form-group">
+        <label>Keterangan Pundi</label>
+        <select ngModel="{{ charityBox?.charityBoxInfo }}" name="charityBoxInfo" class="custom-select" id="updateCharityBoxInfo" required>
+          <option value="BARU">BARU</option>
+          <option value="RELOKASI">RELOKASI</option>
+        </select>
+        <div *ngIf="errors?.charityBoxInfo" class="is-invalid text-danger">{{ errors.charityBoxInfo }}</div>
+      </div>
+      <div class="form-group">
+        <label>Nama Outlet</label>
+        <input type="text" ngModel="{{ charityBox?.outletName }}" name="outletName" class="form-control" autocomplete="off" required>
+        <div *ngIf="errors?.outletName" class="is-invalid text-danger">{{ errors.outletName }}</div>
+      </div>
+      <!--      <div class="form-group">-->
+      <!--        <label>Kode</label>-->
+      <!--        <input type="text" ngModel="{{ charityBox?.code }}" name="code" class="form-control" autocomplete="off" required>-->
+      <!--      </div>-->
+      <div class="form-group">
+        <label>Alamat</label>
+        <input type="text" ngModel="{{ charityBox?.address }}" name="address" class="form-control" autocomplete="off" required>
+        <div *ngIf="errors?.address" class="is-invalid text-danger">{{ errors.address }}</div>
+      </div>
+      <div class="form-group">
+        <label>Nama Pemilik</label>
+        <input type="text" ngModel="{{ charityBox?.ownerName }}" name="ownerName" class="form-control" autocomplete="off" required>
+        <div *ngIf="errors?.ownerName" class="is-invalid text-danger">{{ errors.ownerName }}</div>
+      </div>
+      <div class="form-group">
+        <label>No Telepon</label>
+        <input type="text" appNumber ngModel="{{ charityBox?.phoneNumber }}" name="phoneNumber" class="form-control" autocomplete="off" required>
+        <div *ngIf="errors?.phoneNumber" class="is-invalid text-danger">{{ errors.phoneNumber }}</div>
+      </div>
+      <div class="form-group">
+        <label>Tanggal Penitipan</label>
+        <input type="date" ngModel="{{ charityBox?.depositDate }}" name="depositDate" class="form-control" autocomplete="off" required>
+        <div *ngIf="errors?.depositDate" class="is-invalid text-danger">{{ errors.depositDate }}</div>
+      </div>
+      <div class="form-group">
+        <label>Foto Outlet</label>
+        <input type="file" ngModel (change)="onFileSelected($event)" name="outletPhoto" class="form-control" autocomplete="off" required>
+        <img class="mt-1" [src]="charityBox?.outletPhoto" width="100" alt="Foto Outlet">
+      </div>
+      <div class="form-group">
+        <label>Koordinat</label>
+        <input #coordinates type="text" ngModel="{{ charityBox?.coordinates }}" name="coordinates" class="form-control" id="updateCoordinates" autocomplete="off" readonly required>
+        <div *ngIf="errors?.coordinates" class="is-invalid text-danger">{{ errors.coordinates }}</div>
+      </div>
+      <div id="updateMap" style="height: 400px"></div>
+      <div class="form-group">
+        <label>Keterangan Lainnya</label>
+        <textarea ngModel="{{ charityBox?.otherInfo }}" name="otherInfo" class="form-control" rows="3" placeholder="Masukkan keterangan...."></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button (click)="modal.close()" type="button" class="btn btn-secondary">Batal</button>
+      <button [disabled]="updateForm.invalid || coordinates.value === ''" type="submit" class="btn btn-primary">Simpan
+      </button>
+    </div>
+  </form>
+</ng-template>
+
+<ng-template #deleteContent let-modal>
+  <div class="modal-header">
+    <h1 class="modal-title fs-5">Konfirmasi Hapus</h1>
+    <button type="button" (click)="modal.close()" class="btn-close" aria-label="Close"></button>
+  </div>
+  <div class="modal-body">
+    Anda yakin ingin menghapus data?
+    <!--    <span class="badge rounded-pill text-bg-success">-->
+    <!--      {{ charityBox?.outletName }}-->
+    <!--    </span><br><br>-->
+  </div>
+  <div class="modal-footer">
+    <button (click)="modal.close()" type="button" class="btn btn-secondary">Batal</button>
+    <button (click)="onDeleteCharityBox(charityBox!.id)" type="button" class="btn btn-danger" id="delete">
+      Hapus
+    </button>
+  </div>
+</ng-template>
+
+<ng-template #openImage let-modal>
+  <div class="modal-header">
+    <h1 class="modal-title fs-5">Foto Outlet</h1>
+    <button type="button" (click)="modal.close()" class="btn-close" aria-label="Close"></button>
+  </div>
+  <div class="modal-body text-center">
+    <img [src]="url" width="100%" alt="Foto Outlet">
+  </div>
+</ng-template>
+

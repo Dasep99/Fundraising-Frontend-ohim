@@ -1,0 +1,380 @@
+<div class="row my-2 align-items-center">
+  <div class="col-sm-6">
+    <h3 class="m-0">Donasi Cash</h3>
+  </div>
+  <div class="col-sm-6 d-sm-block d-none">
+    <ol class="breadcrumb float-sm-right m-0">
+      <li class="breadcrumb-item">{{ userRole.replaceAll('_', ' ') }}</li>
+      <li class="breadcrumb-item">Donasi Cash</li>
+    </ol>
+  </div>
+</div>
+<div class="row" *ngIf="alertMessage">
+  <div class="col-12">
+    <div class="alert alert-success mb-2">
+      {{ alertMessage }}
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header">
+        <div class="d-flex justify-content-between align-items-center">
+          <button *ngIf="userRole === 'FRONT_OFFICE' || userRole === 'TIM_JEMPUT_DONASI'" (click)="openAddModal(addContent)" class="btn btn-primary btn-sm m-1">
+            <i class="fas fa-plus"></i>
+            Tambah Data
+          </button>
+          <form (ngSubmit)="onSearch(search.value)">
+            <div class="input-group">
+              <input #search type="text" class="form-control form-control-sm" placeholder="Search">
+              <div class="input-group-append">
+                <button type="submit" class="btn btn-primary btn-sm">
+                  <span class="fas fa-search"></span>
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div class="card-body table-responsive p-0">
+        <table class="table table-hover table-bordered">
+          <thead>
+          <tr class="text-center border-top-0">
+            <th>No</th>
+            <th class="min-w-9" *ngIf="userRole === 'ADMIN_PENERIMAAN'">Unit</th>
+            <th class="min-w-9">No Kuitansi</th>
+            <th>Tanggal</th>
+            <th class="min-w-10">ID Donatur</th>
+            <th class="min-w-15">Nama Donatur</th>
+            <th class="min-w-10">Jumlah Donasi</th>
+            <th class="min-w-12">Akad</th>
+            <th class="min-w-10">Kuitansi</th>
+            <th class="min-w-9">Status</th>
+            <th *ngIf="userRole === 'ADMIN_PENERIMAAN'">
+              Manajemen
+            </th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let d of cashDonations | slice: (currentPage - 1) * pageSize : currentPage * pageSize; let i = index">
+            <td>{{ (currentPage - 1) * pageSize + i + 1 }}</td>
+            <td *ngIf="userRole === 'ADMIN_PENERIMAAN'">{{ d.user.workArea }}</td>
+            <td>{{ d.receiptNumber }}</td>
+            <td>{{ d.date | date: 'dd/MM/yyyy' }}</td>
+            <td>{{ d.donor.donorId }}</td>
+            <td>{{ d.donor.name }}</td>
+            <td>
+              <div class="d-flex justify-content-between">
+                <span>Rp</span>
+                <span>{{ d.amount | number: '1.0-0': 'id' }}</span>
+              </div>
+            </td>
+            <td>{{ d.contract.replaceAll('_', ' ') }}</td>
+            <td class="text-center">
+              <button (click)="openViewImage(openImage, d)" class="btn btn-info btn-sm">
+                <!--              <button (click)="openViewReceipt(d)" class="btn btn-success btn-sm">-->
+                <i class="nav-icon fas fa-copy"></i>
+                Lihat Kuitansi
+              </button>
+            </td>
+            <td class="text-center">
+              <span class="badge"
+                    [ngClass]="{'badge-primary': d.status === 'TERVERIFIKASI', 'badge-secondary': d.status === 'MENUNGGU', 'badge-warning': d.status === 'DIPERBAIKI'}">
+                {{ d.status }}
+              </span>
+            </td>
+            <td *ngIf="userRole === 'ADMIN_PENERIMAAN'">
+              <div class="d-flex">
+                <button (click)="openUpdateModal(updateContent, d)" class="btn btn-warning btn-sm" title="Ubah">
+                  <i class="fas fa-pen"></i>
+                </button>
+                <button (click)="openDeleteModal(deleteContent, d)" class="btn btn-danger btn-sm ml-1" title="Hapus">
+                  <i class="fas fa-trash"></i>
+                </button>
+                <button (click)="openAccModal(verificationContent, d)" class="btn btn-success btn-sm ml-1"
+                        *ngIf="d.status === 'MENUNGGU'" title="Verifikasi">
+                  <i class="fas fa-check-circle"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="mt-3 ms-3">
+        <ngb-pagination
+          [(page)]="currentPage"
+          [pageSize]="pageSize"
+          [collectionSize]="cashDonations.length">
+        </ngb-pagination>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<ng-template #addContent let-modal>
+  <div class="modal-header">
+    <h1 class="modal-title fs-5">Tambah Data Donasi Cash</h1>
+    <button type="button" (click)="modal.close()" class="btn-close" aria-label="Close"></button>
+  </div>
+  <div class="modal-body">
+    <form #addForm="ngForm" (ngSubmit)="onAddCashDonation(addForm)" id="addForm">
+      <input type="hidden" name="status" ngModel="MENUNGGU">
+      <div class="form-group">
+        <label class="text-sm">Tanggal <span class="text-danger">*</span></label>
+        <input type="date" ngModel name="date" class="form-control form-control-sm" id="focusAdd" autocomplete="off" required>
+        <div *ngIf="errors?.date" class="is-invalid text-danger">{{ errors.date }}</div>
+      </div>
+      <div class="form-group">
+        <label class="text-sm">Donatur <span class="text-danger">*</span></label>
+        <select #donorSelect ngModel="{{ donorSelect.value }}" name="donorId" class="form-control form-control-sm form-select select2" required>
+          <option value="">-- Pilih Donatur --</option>
+          <option *ngFor="let donor of donors" [value]="donor.id">({{ donor.donorId }}) {{ donor.name }}</option>
+        </select>
+        <div *ngIf="errors?.donorId" class="is-invalid text-danger">{{ errors.donorId }}</div>
+      </div>
+      <div class="form-group">
+        <label class="text-sm">Akad <span class="text-danger">*</span></label>
+        <select #contractSelect ngModel="{{ contractSelect.value }}" name="contract" class="form-control form-control-sm form-select select2 select2" required>
+          <option value="">-- Pilih Akad --</option>
+          <option value="ZAKAT_INDIVIDU">ZAKAT INDIVIDU</option>
+          <option value="ZAKAT_ENTITAS">ZAKAT ENTITAS</option>
+          <option value="ZAKAT_FITRAH">ZAKAT FITRAH</option>
+          <option value="INSHO">INSHO</option>
+          <option value="BANTUAN_BENCANA">BANTUAN BENCANA</option>
+          <option value="NADZAR">NADZAR</option>
+          <option value="AMBULANCE">AMBULANCE</option>
+          <option value="FIDYAH">FIDYAH</option>
+          <option value="KIFARAT">KIFARAT</option>
+          <option value="AQIQAH">AQIQAH</option>
+          <option value="QURBAN">QURBAN</option>
+          <option value="HIBAH">HIBAH</option>
+          <option value="SANTUNAN_ACARA">SANTUNAN ACARA</option>
+          <option value="EVENT_ACARA">EVENT ACARA</option>
+          <option value="NON_HALAL">NON HALAL</option>
+          <option value="WAKAF_PEDULI">WAKAF PEDULI</option>
+          <option value="WAKAF_QURAN">WAKAF QURAN</option>
+          <option value="WAKAF_BANGUNAN">WAKAF BANGUNAN</option>
+          <option value="LAIN_LAIN">LAIN LAIN</option>
+        </select>
+        <div *ngIf="errors?.contract" class="is-invalid text-danger">{{ errors.contract }}</div>
+      </div>
+      <div class="form-group">
+        <label class="text-sm">No Kuitansi</label>
+        <input type="text" ngModel="{{ receiptNumber }}" name="receiptNumber" class="form-control form-control-sm" readonly required>
+      </div>
+      <div class="form-group">
+        <label class="text-sm">Jumlah Donasi <span class="text-danger">*</span></label>
+        <input type="text" appDotNumber ngModel name="amount" class="form-control form-control-sm" autocomplete="off" required>
+        <div *ngIf="errors?.amount" class="is-invalid text-danger">{{ errors.amount }}</div>
+      </div>
+      <div class="form-group">
+        <label class="text-sm">Foto Kuitansi <span class="text-danger">*</span></label>
+        <input type="file" (change)="onFileSelected($event)" ngModel name="receiptPhoto" class="form-control form-control-sm" autocomplete="off" required>
+        <div *ngIf="errors === 'Required part \'file\' is not present.'" class="is-invalid text-danger">
+          Foto kuitansi wajib diisi
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <div class="d-flex justify-content-between align-items-center w-100">
+      <div>
+        <span class="text-danger">*</span>
+        <span class="text-sm"> Wajib diisi</span>
+      </div>
+      <div>
+        <button (click)="modal.close()" type="button" class="btn btn-secondary">Batal</button>
+        <button [disabled]="addForm.invalid" type="submit" form="addForm" class="btn btn-primary ml-2">Simpan</button>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #updateContent let-modal>
+  <div class="modal-header">
+    <h1 class="modal-title fs-5">Ubah Data Donasi Cash</h1>
+    <button type="button" (click)="modal.close()" class="btn-close" aria-label="Close"></button>
+  </div>
+  <div class="modal-body">
+    <form #updateForm="ngForm" (ngSubmit)="onUpdateCashDonation(updateForm)" id="updateForm">
+      <input type="hidden" name="id" ngModel="{{ cashDonation?.id }}">
+      <input type="hidden" name="status" ngModel="DIPERBAIKI">
+      <div class="form-group">
+        <label class="text-sm">Tanggal <span class="text-danger">*</span></label>
+        <input type="date" ngModel="{{ cashDonation?.date }}" name="date" class="form-control form-control-sm" id="focusUpdate" autocomplete="off" required>
+        <div *ngIf="errors?.date" class="is-invalid text-danger">{{ errors.date }}</div>
+      </div>
+      <div class="form-group">
+        <label class="text-sm">Donatur <span class="text-danger">*</span></label>
+        <select #donorSelect [ngModel]="cashDonation!.donor!.id" ngModel="{{ donorSelect.value }}" name="donorId" class="form-control form-select select2" required>
+          <option *ngFor="let donor of donors" [value]="donor.id">({{ donor.donorId }}) {{ donor.name }}</option>
+        </select>
+        <div *ngIf="errors?.donorId" class="is-invalid text-danger">{{ errors.donorId }}</div>
+      </div>
+      <div class="form-group">
+        <label class="text-sm">Akad <span class="text-danger">*</span></label>
+        <select #contractSelect ngModel="{{ contractSelect.value }}" name="contract" class="form-control form-control-sm form-select select2" id="contractUpdate" required>
+          <option value="ZAKAT_INDIVIDU">ZAKAT INDIVIDU</option>
+          <option value="ZAKAT_ENTITAS">ZAKAT ENTITAS</option>
+          <option value="ZAKAT_FITRAH">ZAKAT FITRAH</option>
+          <option value="INSHO">INSHO</option>
+          <option value="BANTUAN_BENCANA">BANTUAN BENCANA</option>
+          <option value="NADZAR">NADZAR</option>
+          <option value="AMBULANCE">AMBULANCE</option>
+          <option value="FIDYAH">FIDYAH</option>
+          <option value="KIFARAT">KIFARAT</option>
+          <option value="AQIQAH">AQIQAH</option>
+          <option value="QURBAN">QURBAN</option>
+          <option value="HIBAH">HIBAH</option>
+          <option value="SANTUNAN_ACARA">SANTUNAN ACARA</option>
+          <option value="EVENT_ACARA">EVENT ACARA</option>
+          <option value="NON_HALAL">NON HALAL</option>
+          <option value="WAKAF_PEDULI">WAKAF PEDULI</option>
+          <option value="WAKAF_QURAN">WAKAF QURAN</option>
+          <option value="WAKAF_BANGUNAN">WAKAF BANGUNAN</option>
+          <option value="LAIN_LAIN">LAIN LAIN</option>
+        </select>
+        <div *ngIf="errors?.contract" class="is-invalid text-danger">{{ errors.contract }}</div>
+      </div>
+      <div class="form-group">
+        <label class="text-sm">No Kuitansi</label>
+        <input type="text" ngModel="{{ cashDonation?.receiptNumber }}" name="receiptNumber" class="form-control form-control-sm" readonly required>
+      </div>
+      <div class="form-group">
+        <label class="text-sm">Jumlah Donasi <span class="text-danger">*</span></label>
+        <input type="text" appDotNumber ngModel="{{ addDotNumber(cashDonation!.amount) }}" name="amount" class="form-control form-control-sm" autocomplete="off" required>
+        <div *ngIf="errors?.amount" class="is-invalid text-danger">{{ errors.amount }}</div>
+      </div>
+      <div class="form-group">
+        <label class="text-sm">Foto Kuitansi
+          <span class="fw-normal font-italic">(kosongkan jika tidak ingin mengubah)</span>
+        </label>
+        <input type="file" ngModel name="receiptPhoto" (change)="onFileSelected($event)" class="form-control form-control-sm" autocomplete="off">
+        <img class="w-100 mt-2" [src]="cashDonation?.receiptPhoto" alt="Foto Kuitansi">
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <div class="d-flex justify-content-between align-items-center w-100">
+      <div>
+        <span class="text-danger">*</span>
+        <span class="text-sm"> Wajib diisi</span>
+      </div>
+      <div>
+        <button (click)="modal.close()" type="button" class="btn btn-secondary">Batal</button>
+        <button [disabled]="updateForm.invalid" type="submit" form="updateForm" class="btn btn-primary ml-2">Simpan
+        </button>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #deleteContent let-modal>
+  <div class="modal-header">
+    <h1 class="modal-title fs-5">Konfirmasi Hapus</h1>
+    <button type="button" (click)="modal.close()" class="btn-close" aria-label="Close"></button>
+  </div>
+  <div class="modal-body">
+    Anda yakin ingin menghapus data?
+    <!--    <span class="badge rounded-pill text-bg-success">-->
+    <!--      {{ cashDonation?.donor?.name }}-->
+    <!--    </span><br><br>-->
+  </div>
+  <div class="modal-footer">
+    <button (click)="modal.close()" type="button" class="btn btn-dark">Batal</button>
+    <button (click)="onDeleteCashDonation(cashDonation!.id)" type="button" class="btn btn-danger" id="delete">
+      Hapus
+    </button>
+  </div>
+</ng-template>
+
+<ng-template #verificationContent let-modal>
+  <div class="modal-header">
+    <h1 class="modal-title fs-5">Konfirmasi Verifikasi</h1>
+    <button type="button" (click)="modal.close()" class="btn-close" aria-label="Close"></button>
+  </div>
+  <div class="modal-body">
+    <div class="row border-bottom pb-1">
+      <div class="col-4">
+        Unit
+      </div>
+      <div class="col-8 fw-bold">
+        {{ cashDonation?.user?.workArea }}
+      </div>
+    </div>
+    <div class="row border-bottom py-1">
+      <div class="col-4">
+        No Kuitansi
+      </div>
+      <div class="col-8 fw-bold">
+        {{ cashDonation?.receiptNumber }}
+      </div>
+    </div>
+    <div class="row border-bottom py-1">
+      <div class="col-4">
+        Tanggal
+      </div>
+      <div class="col-8 fw-bold">
+        {{ cashDonation?.date | date: 'dd/MM/yyyy' }}
+      </div>
+    </div>
+    <div class="row border-bottom py-1">
+      <div class="col-4">
+        ID Donatur
+      </div>
+      <div class="col-8 fw-bold">
+        {{ cashDonation?.donor?.donorId }}
+      </div>
+    </div>
+    <div class="row border-bottom py-1">
+      <div class="col-4">
+        Nama Donatur
+      </div>
+      <div class="col-8 fw-bold">
+        {{ cashDonation?.donor?.name }}
+      </div>
+    </div>
+    <div class="row border-bottom py-1">
+      <div class="col-4">
+        Akad
+      </div>
+      <div class="col-8 fw-bold">
+        {{ cashDonation?.contract?.replaceAll('_', ' ') }}
+      </div>
+    </div>
+    <div class="row border-bottom py-1">
+      <div class="col-4">
+        Jumlah Donasi
+      </div>
+      <div class="col-8 fw-bold">
+        Rp {{ cashDonation?.amount | number: '1.0-0': 'id' }}
+      </div>
+    </div>
+    <div class="row pt-1">
+      <div class="col-12">
+        <img [src]="cashDonation?.receiptPhoto" width="100%" alt="Foto Kuitansi">
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button (click)="modal.close()" type="button" class="btn btn-secondary">Batal</button>
+    <button (click)="onAccStatusCashDonation(cashDonation!.id)" type="button" class="btn btn-success ml-2" id="acc">
+      Konfirmasi
+    </button>
+  </div>
+</ng-template>
+
+<ng-template #openImage let-modal>
+  <div class="modal-header">
+    <h1 class="modal-title fs-5">Foto Kuitansi</h1>
+    <button type="button" (click)="modal.close()" class="btn-close" aria-label="Close"></button>
+  </div>
+  <div class="modal-body text-center">
+    <img [src]="cashDonation?.receiptPhoto" width="100%" alt="Foto Kuitansi">
+  </div>
+</ng-template>
