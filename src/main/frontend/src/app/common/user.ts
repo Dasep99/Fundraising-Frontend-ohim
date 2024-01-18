@@ -1,3 +1,4 @@
+import {PenerimaanAkad} from "./penerimaan-akad";
 
 export class User {
   public id!: string;
@@ -6,6 +7,7 @@ export class User {
   public password!: string;
   public role!: string;
   public workArea!: string;
+  public akad!: PenerimaanAkad
 
 }
 

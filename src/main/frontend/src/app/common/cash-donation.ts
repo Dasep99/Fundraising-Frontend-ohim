@@ -1,6 +1,7 @@
 import {User} from "./user";
 import {Donor} from "./donor";
 import {Target} from "./target";
+import {PenerimaanAkad} from "./penerimaan-akad";
 
 export class CashDonation {
   public id!: string;
@@ -15,5 +16,6 @@ export class CashDonation {
   public donor!: Donor;
   public user!: User;
   public target!: Target
+  public akad!: PenerimaanAkad
 }
 

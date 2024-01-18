@@ -17,6 +17,7 @@ export const environmentDevelopment = {
     transferDonation : 'api/transferDonations',
     user : 'api/users',
     region: 'api/region',
-    targets: 'api/targets'
+    targets: 'api/targets',
+    penerimaanAkad: 'api/akads'
   }
 }
