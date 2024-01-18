@@ -190,8 +190,14 @@
           </li>
           <li class="nav-item">
             <a routerLink="targets" class="nav-link" (click)="activeMenu = 'targets'" [ngClass]="{'active': activeMenu === 'targets'}">
-              <i class="nav-icon fas fa-calendar-check"></i>
+              <i class="nav-icon fas fa-bullseye"></i>
               <span class="brand-text">Target</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a routerLink="penerimaan_akad" class="nav-link" (click)="activeMenu = 'penerimaan_akad'" [ngClass]="{'active': activeMenu === 'penerimaan_akad'}">
+              <i class="nav-icon fas fa-calendar-check"></i>
+              <span class="brand-text">Penerimaan Perakad</span>
             </a>
           </li>
         </ul>

@@ -25,6 +25,7 @@ import {MarketingKomunikasiComponent} from "./component/dashboard/marketing-komu
 import {NotFoundComponent} from "./component/not-found/not-found.component";
 import {TargetComponent} from "./component/target/target.component";
 import {DailyReceiptsComponent} from "./component/daily-receipts/daily-receipts.component";
+import {PenerimaanPerakadComponent} from "./component/penerimaan-perakad/penerimaan-perakad.component";
 
 
 const routes: Routes = [
@@ -119,6 +120,13 @@ const routes: Routes = [
         component: TargetComponent,
         canActivate: [AuthGuard],
         data: {expectedRoles: [ 'MANAGER_FUNDRAISING']}
+      },
+      {
+        path: 'penerimaan_akad',
+        component: PenerimaanPerakadComponent,
+        canActivate: [AuthGuard],
+        data: {expectedRoles: [ 'MANAGER_FUNDRAISING']}
+
       },
       {
         path: 'pengguna',

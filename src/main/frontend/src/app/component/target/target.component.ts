@@ -49,7 +49,7 @@ export class TargetComponent {
       return target;
     });
   }
-  // getTargets() {
+  // getTarge() {
   //   const today = new Date();
   //   const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
   //   this.targetService.getTargets().subscribe(
@@ -175,7 +175,6 @@ export class TargetComponent {
 
 
   onAddTargets(addForm: NgForm){
-    console.log(addForm)
     addForm.value.inputTarget = this.removeDotNumber(addForm.value.inputTarget);
     this.targetService.addTargets(addForm.value).pipe(
       catchError((error: HttpErrorResponse) => {

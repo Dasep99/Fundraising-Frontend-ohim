@@ -22,6 +22,34 @@
   <div class="row">
     <div class="col-lg-6 col-6">
 
+      <div class="small-box bg-warning">
+        <div class="inner" >
+          <h3 style="color: white">Rp {{ getInputTargets | number: '1.0-0': 'id'}}</h3>
+          <h6 style="color: white">Target Bulan Ini</h6>
+        </div>
+        <div class="icon">
+          <i class="nav-icon fas fa-solid fa-money-bill-alt"></i>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="col-lg-6 col-6">
+
+      <div class="small-box bg-info">
+        <div class="inner">
+          <h3 style="color: white">Rp {{ getPerolehan | number: '1.0-0': 'id'}}</h3>
+          <h6>Perolehan</h6>
+        </div>
+        <div class="icon">
+          <i class="nav-icon fas fa-solid fa-inbox in"></i>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="col-lg-6 col-6">
+
       <div class="small-box bg-info">
         <div class="inner">
           <h3>{{ visits.length }}</h3>

@@ -35,6 +35,7 @@ import { NumberToWordsPipe } from './helpers/number-to-words.pipe';
 import { TargetComponent } from './component/target/target.component';
 import { DailyReceiptsComponent } from './component/daily-receipts/daily-receipts.component';
 import { AcceptanceOfContractComponent } from './component/acceptance-of-contract/acceptance-of-contract.component';
+import { PenerimaanPerakadComponent } from './component/penerimaan-perakad/penerimaan-perakad.component';
 
 @NgModule({
   declarations: [
@@ -66,7 +67,8 @@ import { AcceptanceOfContractComponent } from './component/acceptance-of-contrac
     NumberToWordsPipe,
     TargetComponent,
     DailyReceiptsComponent,
-    AcceptanceOfContractComponent
+    AcceptanceOfContractComponent,
+    PenerimaanPerakadComponent
   ],
   imports: [
     BrowserModule,

@@ -9,6 +9,7 @@ export class Target{
   public persentase!: number
   public average!: number
   public estimasi!: number
+  public user!: User;
 
 
 }

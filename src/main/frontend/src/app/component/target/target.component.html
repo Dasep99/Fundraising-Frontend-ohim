@@ -64,7 +64,7 @@
               <button (click)="openDeleteModal(deleteContent, d)" class="btn btn-danger btn-sm ml-1" title="Hapus">
                 <i class="fas fa-trash"></i>
               </button>
-              <button [routerLink]="['/history', d.date, 'daily-receipts']"  class="btn btn-success btn-sm ml-1" title="riwayat">
+              <button [routerLink]="['/history', d.id, 'daily-receipts']"  class="btn btn-success btn-sm ml-1" title="riwayat">
                 <i class="fas fa-donate"></i>
               </button>
             </td>

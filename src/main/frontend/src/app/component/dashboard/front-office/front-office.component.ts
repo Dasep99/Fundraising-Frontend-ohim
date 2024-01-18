@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import {Donor} from "../../../common/donor";
-import {AppComponent} from "../../../app.component";
+import {Target} from "../../../common/target";
 import {DonorService} from "../../../service/donor.service";
 import {TransferDonationService} from "../../../service/transfer-donation.service";
 import {AuthService} from "../../../service/auth.service";
@@ -17,6 +17,7 @@ import {CashDepositService} from "../../../service/cash-deposit.service";
 import {CashDeposit} from "../../../common/cash-deposit";
 import {DailyValidation} from "../../../common/daily-validation";
 import {DailyValidationService} from "../../../service/daily-validation.service";
+import {TargetService} from "../../../service/target.service";
 
 @Component({
   selector: 'app-front-office',
@@ -26,10 +27,13 @@ import {DailyValidationService} from "../../../service/daily-validation.service"
 export class FrontOfficeComponent {
 
   donors: Donor[] = [];
+  targets: Target[] = []
   visits: Visit[] = []
   dailyValidations: DailyValidation[] = [];
   date!: string
   userId?: string
+  userWorkArea?: string;
+
 
 
   constructor(private donorData: DonorService,
@@ -41,11 +45,16 @@ export class FrontOfficeComponent {
               private eventCompensationService: EventCompensationService,
               private CashDepositData: CashDepositService,
               private dailyValidationService: DailyValidationService,
+              private targetService: TargetService,
+              private donationCashService: CashDonationService,
+              private donationTransfer: TransferDonationService
               ) {
   }
 
   ngOnInit() {
+    this.userWorkArea = '' + this.authService.getWorkArea();
     this.userId = '' + this.authService.getUserId()
+    this.getTargets(this.userWorkArea)
     this.getDonors(this.userId)
     this.getVisits(this.userId)
     this.getTotalCashAmountToday(this.userId)
@@ -71,6 +80,80 @@ export class FrontOfficeComponent {
   currentPage = 1;
   totalPages = 1;
   pageSize = 10;
+
+  getInputTargets: number = 0;
+  getPerolehan: number = 0;
+  getTargets(userWorkArea: string) {
+    const today = new Date();
+    const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+
+    this.targetService.getTargets().subscribe(
+      (targets: Target[]) => {
+        const filteredTargets = targets.filter(target => target.unit === userWorkArea);
+        filteredTargets.forEach(target => {
+          this.getInputTargets = target.inputTarget
+
+          this.donationCashService.getCashDonations().subscribe(
+            cashDonations => {
+              const cashMap = new Map();
+              cashDonations.forEach(donation => {
+                const transferDate = new Date(donation.date);
+                if (
+                  transferDate >= startOfMonth &&
+                  transferDate <= today &&
+                  filteredTargets.find(target => target.unit === userWorkArea && target.unit === this.userId)
+                ) {
+                  cashMap.set(
+                    userWorkArea,
+                    (cashMap.get(userWorkArea) || 0) + donation.amount
+                  );
+                }
+              });
+
+              this.donationTransfer.getTransferDonations().subscribe(
+                transferDonations => {
+                  const transferMap = new Map();
+                  transferDonations.forEach(donationTransfer => {
+                    const transferDate = new Date(donationTransfer.date);
+                    if (
+                      transferDate >= startOfMonth &&
+                      transferDate <= today &&
+                      filteredTargets.find(target => target.unit === userWorkArea && target.unit === this.userId)
+                    ) {
+                      transferMap.set(
+                        userWorkArea,
+                        (transferMap.get(userWorkArea) || 0) + donationTransfer.amount
+                      );
+                    }
+                  });
+
+                  filteredTargets.forEach(target => {
+                    const cashAmount = cashMap.get(target.unit) || 0;
+                    const transferAmount = transferMap.get(target.unit) || 0;
+                    target.input = cashAmount + transferAmount;
+                  });
+
+                  this.getPerolehan = target.input
+
+
+                },
+                (transferError) => {
+                  console.error(transferError);
+                }
+              );
+            },
+            (cashError) => {
+              console.error(cashError);
+            }
+          );
+
+
+        });
+      }
+
+    );
+  }
+
 
   getVisits(userId: string): void{
     this.visitService.getVisits().subscribe(
