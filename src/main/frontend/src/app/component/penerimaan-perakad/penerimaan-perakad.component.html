@@ -1,0 +1,139 @@
+<div class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <h1 class="m-0">Penerimaan PerAkad</h1>
+      </div>
+<!--      <div class="alert alert-success" *ngIf="alertMessage">-->
+<!--        {{ alertMessage }}-->
+<!--      </div>-->
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header">
+        <div class="d-flex justify-content-between align-items-center">
+          <button *ngIf="userRole === 'MANAGER_FUNDRAISING'" (click)="openAddModal(addContent)" class="btn btn-primary btn-sm m-1">
+            <i class="fas fa-plus"></i>
+            Tambah Data
+          </button>
+          <form>
+            <div class="input-group">
+              <input #search type="text" class="form-control form-control-sm" placeholder="Search">
+              <div class="input-group-append">
+                <button type="submit" class="btn btn-primary btn-sm">
+                  <span class="fas fa-search"></span>
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+
+
+      <div class="card-body table-responsive p-0">
+        <table class="table table-bordered">
+          <thead>
+          <tr  class="text-center border-top-0">
+            <th>No</th>
+            <th>Akad</th>
+            <th *ngFor="let akad of akads">{{ akad.unit }}</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let data of akads | slice: (currentPage - 1) * pageSize : currentPage * pageSize; let i = index">
+            <td>{{ (currentPage - 1) * pageSize + i + 1 }}</td>
+            <td>{{ data.donationcontract }}</td>
+            <td>Rp {{ data.input | number: '1.0-0'}}</td>
+          </tr>
+          </tbody>
+        </table>
+
+
+
+      </div>
+
+
+      <div class="mt-3 ms-3">
+        <ngb-pagination
+          [(page)]="currentPage"
+          [pageSize]="pageSize"
+          [collectionSize]="akads.length">
+
+        </ngb-pagination>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<ng-template #addContent let-modal>
+  <div class="modal-header">
+    <h1 class="modal-title fs-5">Tambah Data Target</h1>
+    <button type="button" (click)="modal.close()" class="btn-close" aria-label="Close"></button>
+  </div>
+  <form #addForm="ngForm" (ngSubmit)="onAddAkads(addForm)">
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="text-sm">Unit <span class="text-danger">*</span></label>
+        <select ngModel name="unit" class="form-control form-control-sm form-select" required>
+          <option value="">-- Pilih Unit --</option>
+          <option value="G0">G0</option>
+          <option value="G1">G1</option>
+          <option value="G2">G2</option>
+          <option value="G3">G3</option>
+          <option value="G4">G4</option>
+          <option value="G5">G5</option>
+          <option value="G6">G6</option>
+          <option value="G7">G7</option>
+          <option value="G8">G8</option>
+          <option value="G9">G9</option>
+          <option value="G10">G10</option>
+          <option value="G11">G11</option>
+          <option value="G12">G12</option>
+          <option value="G13">G13</option>
+          <option value="G14">G14</option>
+          <option value="G15">G15</option>
+          <option value="G16">G16</option>
+          <option value="G17">G17</option>
+          <option value="G18">G18</option>
+          <option value="G19">G19</option>
+          <option value="G20">G20</option>
+          <option value="G21">G21</option>
+          <option value="CIREBON">CIREBON</option>
+          <option value="BEKASI">BEKASI</option>
+          <option value="JAKARTA">JAKARTA</option>
+          <option value="KUNINGAN">KUNINGAN</option>
+          <option value="MAJALENGKA">MAJALENGKA</option>
+          <option value="KALIMANTAN">KALIMANTAN</option>
+          <option value="SURABAYA">SURABAYA</option>
+        </select>
+        <div *ngIf="errors?.unit" class="is-invalid text-danger text-sm">{{ errors.unit }}</div>
+      </div>
+      <div class="form-group">
+        <label class="text-sm">Akad<span class="text-danger">*</span></label>
+        <select ngModel name="donationcontract" class="form-control form-control-sm form-select" required>
+          <option value="">-- Pilih Akad --</option>
+          <option value="ZAKAT">ZAKAT</option>
+          <option value="ISHO_TIDAK_TERIKAT">ISHO TIDAK TERIKAT</option>
+          <option value="DSKL">DSKL</option>
+          <option value="QURBAN">QURBAN</option>
+          <option value="AQIQAH">AQIQAH</option>
+          <option value="WAKAF">WAKAF</option>
+          <option value="NON_HALAL">NON_HALAL</option>
+          <option value="LAINNYA">LAINNYA</option>
+
+        </select>
+        <div *ngIf="errors?.akad_contract" class="is-invalid text-danger text-sm">{{ errors.akad_contract }}</div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button (click)="modal.close()" type="button" class="btn btn-secondary">Batal</button>
+      <button [disabled]="addForm.invalid" type="submit" class="btn btn-primary">Simpan</button>
+    </div>
+  </form>
+</ng-template>
